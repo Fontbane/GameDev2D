@@ -5,6 +5,7 @@
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned long u32;
+typedef unsigned long long u64;
 typedef signed char s8;
 typedef short s16;
 typedef long s32;
@@ -31,29 +32,12 @@ typedef enum {
     T_DRAGON
 } Type;
 
-enum {
-    COLL_IMPASSIBLE,
-    COLL_WATER,
-    COLL_2,
-    COLL_3,
-    COLL_4,
-    COLL_5,
-    COLL_6,
-    COLL_TRANSITION,
-    COLL_MULTILEVEL
-};
-
-enum {
-    MB_NONE,
-    MB_CRACKED,
-    MB_HOLE,
-    MB_GRASS,
-    MB_MUD,
-    MB_WATER,
-    MB_LEDGE,
-    MB_CONVEYER,
-    MB_SLOPE
-};
+typedef enum Direction{
+    DIR_N,
+    DIR_S,
+    DIR_W,
+    DIR_E
+}Direction;
 
 #define ACTION_NONE 0X00
 #define ACTION_MOVE 0X01

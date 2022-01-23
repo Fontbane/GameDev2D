@@ -2,7 +2,8 @@
 #define __MONSTER_H__
 
 #include "global.h"
-#include "../gfc/include/gfc_vector.h"
+#include "species.h"
+#include "gfc_vector.h"
 
 typedef struct PersonalDict {//stuff that can change and is used in calculations
     u16 species;
@@ -144,11 +145,6 @@ typedef struct levelTech {
 
 typedef levelTech* Moveset;
 
-typedef struct {
-    u16 tileID : 10;
-    u16 collision : 6;
-} MapTile;
-
 enum {
     FAM_MAMMAL,
     FAM_BUG,
@@ -219,30 +215,26 @@ typedef struct Action {
     u8 actionFlag;
 };
 
-
-enum Species {
-    SPECIES_NONE,
-    SPECIES_SAPPURR,
-    SPECIES_CAMOFLINE,
-    SPECIES_VAMPIROOT,
-    SPECIES_PYRUFF,
-    SPECIES_FLAREWOLF,
-    SPECIES_LYCARSON,
-    SPECIES_SQUOINK,
-    SPECIES_WOGHASH,
-    SPECIES_SOLUBOAR,
-    SPECIES_EGLET,
-    SPECIES_REAGLE,
-    SPECIES_MAX
-};
-
 #define NUM_SPECIES SPECIES_MAX
 
 
+/**
+ * @brief Gets the information of the specified participant in a battle
+ * @param who the index of the battle participant
+ * @returns dictionary of specified battler
+ */
 MonDict GetParticipant(u8 who);
 
 u16 CalculateDamage(MonDict attacker, MonDict target, u16 techID, u8 dist);
 
+/**
+ * @brief Calculates relevant attack and defense stats needed for damage calculation
+ * @param attacker
+ * @param target
+ * @param techID the technique being used
+ * @param atk the output attack stat
+ * @param def the output defense stat
+ */
 void CalculateAttack(MonDict attacker, MonDict target, u16 techID, u16* atk, u16* def);
 
 extern const int gTypeMatchupTable[16][16];
