@@ -74,6 +74,8 @@ typedef struct Map{
     MapConnection south;
     MapConnection west;
     MapConnection east;
+    u8 height;
+    u8 width;
     Block* border;
     Encounter* encounters; //Array of 12 random encounters with odds
                            //20% 20% 10% 10% 10% 10% 5% 5% 4% 4% 1% 1%
@@ -83,6 +85,7 @@ typedef struct Map{
 
 void ClearEnts(void);
 void GetZ(Vector2D pos);
+extern void RenderMap(Map map);
 
 
 #endif
