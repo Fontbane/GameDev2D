@@ -1,5 +1,5 @@
-#ifndef __GLOBAL_H__
-#define __GLOBAL_H__
+#ifndef __K_GLOBAL_H__
+#define __K_GLOBAL_H__
 
 
 typedef unsigned char u8;

@@ -1,9 +1,9 @@
-#ifndef __MONSTER_H__
-#define __MONSTER_H__
+#ifndef __K_MONSTER_H__
+#define __K_MONSTER_H__
 
-#include "global.h"
-#include "species.h"
 #include "gfc_vector.h"
+#include "k_global.h"
+#include "k_species.h"
 
 typedef struct PersonalDict {//stuff that can change and is used in calculations
     u16 species;
@@ -78,7 +78,6 @@ typedef struct MonDict {
 } MonDict;
 
 struct BaseStats {
-    u16 species; /*0x00*/
     u8 hp; /*0x02*/
     u8 attack; /*0x03*/
     u8 defense; /*0x04*/
@@ -145,6 +144,14 @@ typedef struct levelTech {
 
 typedef levelTech* Moveset;
 
+#define STATUS_NORMAL   0X01
+#define STATUS_STUN     0X02
+#define STATUS_BURN     0x04
+#define STATUS_FREEZE   0X08
+#define STATUS_POISON   0X10
+#define STATUS_DIZZY    0x20
+#define STATUS_SLEEP    0X30
+
 enum {
     FAM_MAMMAL,
     FAM_BUG,
@@ -167,7 +174,7 @@ struct AITamer {
     u16 item : 12;
     u16 itemCount : 4;
     u8 aiFlags;
-};
+}AITamer;
 
 typedef struct {
     u8 fieldsize;
@@ -190,7 +197,7 @@ Battle gBattle;
 typedef struct BattlefieldState {
     u16 flags;
     MonDict* participants;
-};
+}BattlefieldState;
 
 typedef struct BattleMon {
     MonDict mon;
@@ -204,7 +211,7 @@ typedef struct BattleMon {
     Vector2D pos;
     u8 status;
     u16 flags;
-};
+}BattleMon;
 
 typedef struct Action {
     u8 who;
@@ -213,7 +220,7 @@ typedef struct Action {
     u16 tech;
     Vector2D targetPos;
     u8 actionFlag;
-};
+}Action;
 
 #define NUM_SPECIES SPECIES_MAX
 

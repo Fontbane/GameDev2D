@@ -1,6 +1,6 @@
-#include "global.h"
-#include "monster.h"
-#include "technique.h"
+#include "k_global.h"
+#include "k_monster.h"
+#include "k_technique.h"
 
 
 
@@ -28,97 +28,6 @@ const int gTypeMatchupTable[16][16] = {//Effectiveness multiplier is this number
     { 2,        2,      1,      1,      1,      2,      1,          2,      2,      2,      2,      4,      2,      2,      2,      4   }//DRAGON
 };
 
-
-/*const TypeInfo gTypeMatchups[T_DRAGON]{
-    {
-        TMASK_MYSTERY,  //associated type mask
-        0,              //weakness flags
-        0,              //resistance flags
-        0               //immunity flags
-    },{
-        TMASK_BASIC,
-        TMASK_BRAWL,
-        0,
-        0
-    },{
-        TMASK_PLANT,
-        TMASK_FLAME + TMASK_AIR + TMASK_BUG + TMASK_ICE,
-        TMASK_PLANT + TMASK_AQUA + TMASK_ELECTRIC + TMASK_EARTH,
-        0
-    },{
-        TMASK_FLAME,
-        TMASK_AQUA + TMASK_AIR + TMASK_EARTH,
-        TMASK_PLANT + TMASK_FLAME + TMASK_METAL + TMASK_ICE,
-        0
-    },{
-        TMASK_AQUA,
-        TMASK_PLANT + TMASK_AIR + TMASK_ELECTRIC,
-        TMASK_FLAME + TMASK_AQUA + TMASK_ICE + TMASK_METAL,
-        0
-    },{
-        TMASK_AIR,
-        TMASK_ELECTRIC + TMASK_ICE,
-        TMASK_BUG + TMASK_BRAWL,
-        TMASK_EARTH
-    },{
-        TMASK_ELECTRIC,
-        TMASK_EARTH,
-        TMASK_METAL + TMASK_AIR + TMASK_ELECTRIC,
-        0
-    },{
-        TMASK_TOXIC,
-        TMASK_MIND,
-        TMASK_PLANT + TMASK_TOXIC + TMASK_BRAWL,
-        0
-    },{
-        TMASK_BUG,
-        TMASK_FLAME + TMASK_ICE + TMASK_TOXIC,
-        TMASK_EARTH + TMASK_PLANT,
-        0
-    },{
-        TMASK_EARTH,
-        TMASK_AQUA + TMASK_PLANT + TMASK_ICE,
-        TMASK_TOXIC + TMASK_METAL,
-        TMASK_ELECTRIC
-    }
-    ,{
-        TMASK_METAL,
-        TMASK_FLAME + TMASK_EARTH + TMASK_BRAWL,
-        TMASK_PLANT + TMASK_AIR + TMASK_BUG + TMASK_ICE + TMASK_MIND + TMASK_DRAGON,
-        TMASK_TOXIC
-    }
-    ,{
-        TMASK_ICE,
-        TMASK_FLAME + TMASK_BRAWL + TMASK_METAL,
-        TMASK_ICE + TMASK_AQUA,
-        0
-    }
-    ,{
-        TMASK_MIND,
-        TMASK_BUG + TMASK_GHOST,
-        TMASK_BRAWL + TMASK_MIND,
-        0
-    }
-    ,{
-        TMASK_BRAWL,
-        TMASK_MIND + TMASK_TOXIC,
-        TMASK_BUG + TMASK_METAL,
-        0
-    }
-    ,{
-        TMASK_GHOST,
-        TMASK_GHOST,
-        TMASK_TOXIC + TMASK_BUG + TMASK_ICE,
-        TMASK_BASIC + TMASK_BRAWL
-    }
-    ,{
-        TMASK_DRAGON,
-        TMASK_DRAGON + TMASK_ICE,
-        TMASK_PLANT + TMASK_FLAME + TMASK_AQUA + TMASK_ELECTRIC,
-        0
-    }
-}*/
-
 u16 CalculateDamage(MonDict attacker, MonDict target, u16 techID, u8 dist) {
     u16 dmg;
     u16 adjAtk, adjDef;
@@ -131,21 +40,26 @@ u16 CalculateDamage(MonDict attacker, MonDict target, u16 techID, u8 dist) {
     return dmg;
 }
 
-void CalculateAttack(MonDict attacker, MonDict target, u16 techID, u16* atk, u16* def) {
+void CalculateAttack(MonDict attacker, MonDict target, u16 techID, u16 *atk, u16 *def) {
     Technique tech = gTechniques[techID];
     if (tech.category == CAT_PHYSICAL || tech.effect == TEFFECT_TOP_DOWN) {
-        atk = attacker.attack * ((attacker.atkStage >= 0) ? (2 + attacker.atkStage) / 2 : 2 / (2 + attacker.atkStage));
-        def = target.defense * ((target.defStage >= 0) ? (2 + target.defStage) / 2 : 2 / (2 + target.defStage));
+        *atk = attacker.attack * ((attacker.atkStage >= 0) ? (2 + attacker.atkStage) / 2 : 2 / (2 + attacker.atkStage));
+        if (attacker.status & STATUS_BURN) *atk /= 2;
+        *def = target.defense * ((target.defStage >= 0) ? (2 + target.defStage) / 2 : 2 / (2 + target.defStage));
     }
     else if (tech.category == CAT_SPECIAL) {
-        atk = attacker.m_atttack * ((attacker.matkStage >= 0) ? (2 + attacker.matkStage) / 2 : 2 / (2 + attacker.matkStage));
-        def = target.m_defense * ((target.mdefStage >= 0) ? (2 + target.mdefStage) / 2 : 2 / (2 + target.mdefStage));
+        *atk = attacker.m_atttack * ((attacker.matkStage >= 0) ? (2 + attacker.matkStage) / 2 : 2 / (2 + attacker.matkStage));
+        if (attacker.status & STATUS_FREEZE) *atk /= 2;
+        *def = target.m_defense * ((target.mdefStage >= 0) ? (2 + target.mdefStage) / 2 : 2 / (2 + target.mdefStage));
     }
 }
 
 u16 DealDamage(MonDict attacker, MonDict target, u16 damage) {
-    if (damage >= target.currentHP) target.currentHP = 0;
-    else target.currentHP -= damage;
+    if (damage >= target.currentHP) {
+        damage = target.currentHP;
+    }
+    target.currentHP -= damage;
+    return damage;
 }
 
 #define MF_DOWN     0x0001

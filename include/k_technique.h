@@ -1,7 +1,7 @@
 #ifndef __TECHNIQUE_H__
 #define __TECHNIQUE_H__
 
-#include "global.h"
+#include "k_global.h"
 
 typedef enum {
     CAT_PHYSICAL,

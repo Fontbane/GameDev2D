@@ -1,9 +1,7 @@
-#ifndef __FIELD_H__
-#define __FIELD_H__
+#ifndef __K_FIELD_H__
+#define __K_FIELD_H__
 
-#include "global.h"
-#include "entity.h"
-#include "gf2d_sprite.h"
+#include "k_entity.h"
 
 typedef enum {
     COLL_IMPASSIBLE,
@@ -26,12 +24,15 @@ typedef enum MetatileBehavior{
     MB_WATER,
     MB_LEDGE,
     MB_CONVEYER,
-    MB_SLOPE
+    MB_SLOPE,
+    MB_SOIL
 } MetatileBehavior;
 
 typedef struct Block {
-	Vector2D flip;
+    Sprite sprite;
+    Vector2D flip;
     MetatileBehavior behavior;
+    u8 flags;
 	void (*OnTalk)();
 	void (*OnCollide)();
 } Block;
@@ -42,12 +43,15 @@ extern Block WaterEdge;
 extern Block Ledge;
 
 typedef struct Tileset {
-	Sprite sheet;
+	Sprite* sheet;
 	Block* tiles;
 } Tileset;
 
+Tileset gTilesets[16];
+extern void SetUpTilesets();
+
 typedef struct {
-	u16 tileID : 10;
+	u16 blockID : 10;
 	u16 collision : 6;
 } MapTile;
 
@@ -74,11 +78,11 @@ typedef struct Map{
     Encounter* encounters; //Array of 12 random encounters with odds
                            //20% 20% 10% 10% 10% 10% 5% 5% 4% 4% 1% 1%
     Edict* entities;
-
+    MapTile* layout;
 } Map;
 
-void WarpPlayer(Warp warp);
 void ClearEnts(void);
+void GetZ(Vector2D pos);
 
 
 #endif

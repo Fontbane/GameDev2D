@@ -1,5 +1,5 @@
-#ifndef __SPECIES_H__
-#define __SPECIES_H__
+#ifndef __K_SPECIES_H__
+#define __K_SPECIES_H__
 
 enum Species {
     SPECIES_NONE,

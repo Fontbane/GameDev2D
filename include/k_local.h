@@ -1,8 +1,7 @@
 #ifndef __LOCAL_H__
 #define __LOCAL_H__
 
-#include "entity.h"
-#include "field.h"
+#include "k_field.h"
 
 typedef struct GameLocal {
 	Map		map;
@@ -17,7 +16,7 @@ typedef struct GameLocal {
 
 } GameLocal;
 
-u32 Random(int min, int max);
+extern u32 Random(int min, int max);
 
 GameLocal game;
 Map level;
