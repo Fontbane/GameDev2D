@@ -9,23 +9,23 @@ MonDict GetParticipant(u8 who) {
 }
 
 const int gTypeMatchupTable[16][16] = {//Effectiveness multiplier is this number divided by 2. Resistance is 1, SE is 4, immune is 0
-    //MYSTERY   BASIC   PLANT   FLAME   AQUA    AIR     ELECTRIC    TOXIC   BUG     EARTH   METAL   ICE     MIND    BRAWL   GHOST   DRAGON
-    { 2,        2,      2,      2,      2,      2,      2,          2,      2,      2,      2,      2,      2,      2,      2,      2   },//MYSTERY
-    { 2,        2,      2,      2,      2,      2,      2,          2,      2,      2,      2,      2,      2,      4,      2,      2   },//BASIC
-    { 2,        2,      1,      4,      1,      4,      1,          2,      4,      1,      2,      4,      2,      2,      2,      2   },//PLANT
-    { 2,        2,      1,      1,      4,      4,      2,          2,      1,      4,      1,      1,      2,      2,      2,      2   },//FLAME
-    { 2,        2,      4,      1,      1,      4,      2,          2,      2,      2,      1,      1,      2,      2,      2,      2   },//AQUA
-    { 2,        2,      2,      2,      2,      2,      4,          2,      1,      0,      2,      4,      2,      1,      2,      2   },//AIR
-    { 2,        2,      2,      2,      2,      1,      1,          2,      2,      4,      1,      2,      2,      2,      2,      2   },//ELECTRIC
-    { 2,        2,      1,      2,      2,      2,      2,          1,      2,      4,      2,      2,      4,      1,      2,      2   },//TOXIC
-    { 2,        2,      1,      4,      2,      2,      2,          4,      2,      1,      2,      4,      2,      2,      2,      2   },//BUG
-    { 2,        2,      4,      2,      4,      2,      0,          1,      2,      2,      1,      4,      2,      2,      2,      2   },//EARTH
-    { 2,        1,      1,      4,      2,      1,      2,          0,      1,      4,      1,      1,      1,      4,      2,      1   },//METAL
-    { 2,        2,      2,      4,      1,      2,      2,          2,      2,      2,      4,      1,      2,      4,      2,      2   },//ICE
-    { 2,        2,      2,      2,      2,      2,      2,          2,      4,      2,      2,      2,      1,      1,      4,      2   },//MIND
-    { 2,        2,      2,      2,      2,      2,      2,          4,      1,      2,      1,      2,      4,      2,      2,      2   },//BRAWL
-    { 2,        0,      2,      2,      2,      2,      2,          1,      1,      2,      2,      1,      2,      0,      4,      2   },//GHOST
-    { 2,        2,      1,      1,      1,      2,      1,          2,      2,      2,      2,      4,      2,      2,      2,      4   }//DRAGON
+    //MYSTERY   BASIC   PLANT   FLAME   AQUA    AIR     ELECTR  TOXIC   BUG     EARTH   METAL   ICE     MIND    BRAWL   GHOST   DRAGON
+    { 2,        2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2   },//MYSTERY
+    { 2,        2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      2,      4,      2,      2   },//BASIC
+    { 2,        2,      1,      4,      1,      4,      1,      2,      4,      1,      2,      4,      2,      2,      2,      2   },//PLANT
+    { 2,        2,      1,      1,      4,      4,      2,      2,      1,      4,      1,      1,      2,      2,      2,      2   },//FLAME
+    { 2,        2,      4,      1,      1,      4,      2,      2,      2,      2,      1,      1,      2,      2,      2,      2   },//AQUA
+    { 2,        2,      2,      2,      2,      2,      4,      2,      1,      0,      2,      4,      2,      1,      2,      2   },//AIR
+    { 2,        2,      2,      2,      2,      1,      1,      2,      2,      4,      1,      2,      2,      2,      2,      2   },//ELECTRIC
+    { 2,        2,      1,      2,      2,      2,      2,      1,      2,      4,      2,      2,      4,      1,      2,      2   },//TOXIC
+    { 2,        2,      1,      4,      2,      2,      2,      4,      2,      1,      2,      4,      2,      2,      2,      2   },//BUG
+    { 2,        2,      4,      2,      4,      2,      0,      1,      2,      2,      1,      4,      2,      2,      2,      2   },//EARTH
+    { 2,        1,      1,      4,      2,      1,      2,      0,      1,      4,      1,      1,      1,      4,      2,      1   },//METAL
+    { 2,        2,      2,      4,      1,      2,      2,      2,      2,      2,      4,      1,      2,      4,      2,      2   },//ICE
+    { 2,        2,      2,      2,      2,      2,      2,      2,      4,      2,      2,      2,      1,      1,      4,      2   },//MIND
+    { 2,        2,      2,      2,      2,      2,      2,      4,      1,      2,      1,      2,      4,      2,      2,      2   },//BRAWL
+    { 2,        0,      2,      2,      2,      2,      2,      1,      1,      2,      2,      1,      2,      0,      4,      2   },//GHOST
+    { 2,        2,      1,      1,      1,      2,      1,      2,      2,      2,      2,      4,      2,      2,      2,      4   }//DRAGON
 };
 
 u16 CalculateDamage(MonDict attacker, MonDict target, u16 techID, u8 dist) {
@@ -61,6 +61,13 @@ u16 DealDamage(MonDict attacker, MonDict target, u16 damage) {
     target.currentHP -= damage;
     return damage;
 }
+
+Vector2D directions[4] = {
+    [DIR_S] = {  0,  1  },
+    [DIR_W] = { -1,  0  },
+    [DIR_N] = {  0, -1  },
+    [DIR_E] = {  1,  0  }
+};
 
 #define MF_DOWN     0x0001
 #define MF_UP       0x0010

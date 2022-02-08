@@ -1,6 +1,7 @@
 #ifndef __K_GLOBAL_H__
 #define __K_GLOBAL_H__
 
+#include "gfc_vector.h"
 
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -33,9 +34,9 @@ typedef enum {
 } Type;
 
 typedef enum Direction{
-    DIR_N,
     DIR_S,
     DIR_W,
+    DIR_N,
     DIR_E
 }Direction;
 
@@ -45,6 +46,8 @@ typedef enum Direction{
 #define ACTION_ITEM 0X03
 #define ACTION_SWAP 0X04
 #define ACTION_RUN  0X08
+
+extern Vector2D directions[4];
 
 
 #endif

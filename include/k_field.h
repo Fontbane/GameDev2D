@@ -43,16 +43,24 @@ extern Block WaterEdge;
 extern Block Ledge;
 
 typedef struct Tileset {
-	Sprite* sheet;
-	Block* tiles;
+	Sprite*     sheet;
+	Block*      tiles;
+    u16         tileCount;
+    TextLine    filename;
+    u8          refCount;
 } Tileset;
 
 Tileset gTilesets[16];
 extern void SetUpTilesets();
 
-typedef struct {
-	u16 blockID : 10;
-	u16 collision : 6;
+void tile_manager_init(u8 tilesetCount);
+void tileset_load(char* filename);
+void tileset_free(Tileset tileset);
+void tileset_draw(Tileset tileset, u16 tile, Vector2D position);
+
+typedef struct MapTile_s{
+    u16 blockID:12;
+	u16 collision:4;
 } MapTile;
 
 typedef struct MapConnection {
@@ -67,25 +75,28 @@ typedef struct Encounter {
 
 
 typedef struct Map{
-	u16 id;
-	u16 outdoors : 1;
-	Tileset tileset;
-    MapConnection north;
-    MapConnection south;
-    MapConnection west;
-    MapConnection east;
-    u8 height;
-    u8 width;
-    Block* border;
-    Encounter* encounters; //Array of 12 random encounters with odds
-                           //20% 20% 10% 10% 10% 10% 5% 5% 4% 4% 1% 1%
-    Edict* entities;
-    MapTile* layout;
+	u16             id;
+	u16             outdoors : 1;
+	Tileset         tileset;
+    MapConnection   north;
+    MapConnection   south;
+    MapConnection   west;
+    MapConnection   east;
+    u8              height;
+    u8              width;
+    Block*          border;
+    Encounter*      encounters; //Array of 12 random encounters with odds
+                                //20% 20% 10% 10% 10% 10% 5% 5% 4% 4% 1% 1%
+    Edict*          entities;
+    MapTile*        layout;
 } Map;
 
-void ClearEnts(void);
 void GetZ(Vector2D pos);
 extern void RenderMap(Map map);
+
+TileCollision GetCollisionAt(Map map, Vector2D position);
+
+Map gmap;
 
 
 #endif

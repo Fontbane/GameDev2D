@@ -44,6 +44,7 @@ typedef enum Fruit {
 	FRUIT_SUGARCANE,
 	FRUIT_WHEAT,
 	FRUIT_RICE,
+	FRUIT_COFFEE,
 	FRUIT_MAX
 } Fruit;
 
