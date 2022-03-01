@@ -4,13 +4,13 @@
 #include "k_entity.h"
 
 typedef enum {
-    COLL_IMPASSIBLE,
-    COLL_WATER,
     COLL_2,
     COLL_3,
     COLL_4,
     COLL_5,
     COLL_6,
+    COLL_IMPASSIBLE,
+    COLL_WATER,
     COLL_TRANSITION,
     COLL_MULTILEVEL
 } TileCollision;
@@ -64,8 +64,8 @@ typedef struct MapTile_s{
 } MapTile;
 
 typedef struct MapConnection {
-    u16 mapID;
-    Vector2D offset;
+    u16     id;
+    Point8   offset;
 } MapConnection;
 
 typedef struct Encounter {
@@ -74,8 +74,15 @@ typedef struct Encounter {
 } Encounter;
 
 
+typedef struct Chunk {
+    Edict* localents;
+    u8     numEnts;
+    Point8 location;
+}Chunk;
+
 typedef struct Map{
 	u16             id;
+    char*           name;
 	u16             outdoors : 1;
 	Tileset         tileset;
     MapConnection   north;
@@ -85,16 +92,19 @@ typedef struct Map{
     u8              height;
     u8              width;
     Block*          border;
-    Encounter*      encounters; //Array of 12 random encounters with odds
+    Chunk*          chunks;
+    Encounter       encounters[12]; //Array of 12 random encounters with odds
                                 //20% 20% 10% 10% 10% 10% 5% 5% 4% 4% 1% 1%
     Edict*          entities;
     MapTile*        layout;
 } Map;
 
-void GetZ(Vector2D pos);
-extern void RenderMap(Map map);
+extern void RenderMap(Map* map);
+Map* LoadMap(const char* jsonfile);
 
-TileCollision GetCollisionAt(Map map, Vector2D position);
+TileCollision GetCollisionAt(Map *map, Point8 position);
+
+void PrintLayout(Map* map);
 
 Map gmap;
 

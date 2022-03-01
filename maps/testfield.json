@@ -1,0 +1,19 @@
+{
+    "tileset":"images/tiles/kt01.png",
+    "height":40,
+    "width":40,
+    "layout":"maps/map1.bin",
+
+    "events":[
+        {
+            "id":1,
+            "sprite":"images/objects/boy.png",
+            "x":5,
+            "y":6,
+            "type":"NPC",
+            "facing":"south",
+            "think":"generic_think",
+            "ontalk":"boy_talk"
+        }
+    ]
+}

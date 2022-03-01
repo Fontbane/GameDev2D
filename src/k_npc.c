@@ -1,7 +1,7 @@
 #include "k_npc.h"
 
 void tamer_think(Edict* self) {
-	u8 sight = self->info->n->sight;
+	u8 sight = self->info->n.sight;
 	switch (self->facing) {
 		case DIR_N:
 		case DIR_S:

@@ -1,7 +1,7 @@
 #ifndef __K_GLOBAL_H__
 #define __K_GLOBAL_H__
 
-#include "gfc_vector.h"
+#include "gfc_types.h"
 
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -10,6 +10,11 @@ typedef unsigned long long u64;
 typedef signed char s8;
 typedef short s16;
 typedef long s32;
+
+typedef SDL_Point Point;
+typedef SDL_Rect Rect;
+typedef struct { s8 x, y; } Point8;
+typedef struct { u8 x, y, w, h; } Rect8;
 
 #define HIHALF(x) x>>4
 #define LOHALF(x) x&0x0F
@@ -47,7 +52,7 @@ typedef enum Direction{
 #define ACTION_SWAP 0X04
 #define ACTION_RUN  0X08
 
-extern Vector2D directions[4];
+extern Point directions[4];
 
 
 #endif

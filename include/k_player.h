@@ -20,7 +20,7 @@ void player_draw(Edict* player);
 
 void player_init();
 void player_think(Edict* self);
-void player_move(Vector2D movement);
+void player_move(Edict* ent, Point8 movement);
 
 
 #endif // __K_PLAYER_H__

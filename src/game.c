@@ -2,8 +2,10 @@
 #include "simple_logger.h"
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
+#include "gfc_input.h"
 
 #include "k_player.h"
+#include "k_save.h"
 
 int main(int argc, char * argv[])
 {
@@ -25,20 +27,22 @@ int main(int argc, char * argv[])
     init_logger("gf2d.log");
     slog("---==== BEGIN ====---");
     gf2d_graphics_initialize(
-        "gf2d",
-        1200,
-        720,
-        1200,
-        720,
+        "Keystone",
+        960,
+        640,
+        480,
+        320,
         vector4d(0,0,0,255),
         0);
     gf2d_graphics_set_frame_delay(16);
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
+    SetUpTilesets();
+    NewSave("saves/save1.sav");
     /*demo setup*/
     sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
     mouse = gf2d_sprite_load_all("images/pointer.png", 32, 32, 16);
-    hatkid = gf2d_sprite_load_all("images/objects/hatkid.png", 32, 32, 4);
+    hatkid = gf2d_sprite_load_all("images/objects/HatKid.png", 32, 32, 4);
 
 
     Edict HatKid = {
@@ -56,9 +60,7 @@ int main(int argc, char * argv[])
     boy = ent_new();
     boy->sprite = hatkid;
     boy->position = vector2d(128, 128);
-    boy->draw_scale = vector2d(1, 1);
-    boy->Think = ent_think_generic;
-    //Edict* boy = ent_new();
+    //PrintLayout(save1.map);
     /*main game loop*/
     while(!done)
     {
@@ -72,19 +74,19 @@ int main(int argc, char * argv[])
         if (mf >= 16.0)mf = 0;
 
         if (keys[SDL_SCANCODE_W]) {
-            player_move(vector2d(0, -16));
+            player_move(player, cell(0,-1));
             player->facing = DIR_N;
         }
         else if (keys[SDL_SCANCODE_S]) {
-            player_move(vector2d(0, 16));
+            player_move(player, cell(0, 1));
             player->facing = DIR_S;
         }
         else if (keys[SDL_SCANCODE_A]) {
-            player_move(vector2d(-16, 0));
+            player_move(player, cell(-1, 0));
             player->facing = DIR_W;
         }
         else if (keys[SDL_SCANCODE_D]) {
-            player_move(vector2d(16, 0));
+            player_move(player, cell(1, 0));
             player->facing = DIR_E;
         }
         if (keyEvent.type==SDL_KEYDOWN&&keys[SDL_SCANCODE_M]) {
@@ -98,8 +100,6 @@ int main(int argc, char * argv[])
                 boy = ent_new();
                 boy->sprite = hatkid;
                 boy->position = vector2d(128, 128);
-                boy->draw_scale = vector2d(1, 1);
-                boy->Think = ent_think_generic;
             }
             
         }
@@ -109,7 +109,9 @@ int main(int argc, char * argv[])
         gf2d_graphics_clear_screen();// clears drawing buffers
         // all drawing should happen betweem clear_screen and next_frame
             //backgrounds drawn first
-        gf2d_sprite_draw_image(sprite, vector2d(0, 0));
+        //gf2d_sprite_draw_image(sprite, vector2d(0, 0));
+        RenderMap(save1.map);
+        
 
         ent_manager_draw_all();
             

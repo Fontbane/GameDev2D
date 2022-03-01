@@ -4,11 +4,12 @@
 #include "k_field.h"
 
 typedef struct GameLocal {
-	Map		map;
+	u64		framenum;
+	time_t	time;
+	char	*map;
 	Edict*	entities;
 	Edict*	camera;
 	Edict*	player;
-	time_t	time;
 	u32		steps;
 
 	u64		randomSeed;
@@ -16,7 +17,10 @@ typedef struct GameLocal {
 
 } GameLocal;
 
-extern u32 Random(int min, int max);
+
+
+extern u64 Random(u64 min, u64 max);
+extern void SeedRNG();
 
 GameLocal game;
 Map level;
