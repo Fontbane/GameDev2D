@@ -1,0 +1,101 @@
+{
+    "nugget":
+    {
+        "id": 1,
+        "pocket": "treasure",
+        "price": 500
+    },
+    "protein powder":
+    {
+        "id":2,
+        "pocket":"medicine",
+        "price":400,
+        "useOnField":true,
+        "usefunc":"use_raise_tv",
+        "useArgs":1
+    },
+    "calcium tablet":
+    {
+        "id":3,
+        "pocket":"medicine",
+        "price":400,
+        "useOnField":true,
+        "usefunc":"use_raise_tv",
+        "useArgs":2
+    },
+    "mystic powder":
+    {
+        "id":4,
+        "pocket":"medicine",
+        "price":400,
+        "useOnField":true,
+        "usefunc":"use_raise_tv",
+        "useArgs":3
+    },
+    "zinc":
+    {
+        "id":5,
+        "pocket":"medicine",
+        "price":400,
+        "useOnField":true,
+        "usefunc":"use_raise_tv",
+        "useArgs":4
+    },
+    "sugar_packet":
+    {
+        "id":6,
+        "pocket":"medicine",
+        "price":400,
+        "useOnField":true,
+        "usefunc":"use_raise_tv",
+        "useArgs":5
+    },
+    "milk":
+    {
+        "id":7,
+        "pocket":"medicine",
+        "price":400,
+        "useOnField":true,
+        "usefunc":"use_raise_tv",
+        "useArgs":0
+    },
+    "restorade":
+    {
+        "id":8,
+        "pocket":"medicine",
+        "price":20,
+        "useOnField":true,
+        "useInBattle":true,
+        "usefunc":"use_heal",
+        "useArgs":20
+    },
+    "restorade plus":
+    {
+        "id":9,
+        "pocket":"medicine",
+        "price":40,
+        "useOnField":true,
+        "useInBattle":true,
+        "usefunc":"use_heal",
+        "useArgs":50
+    },
+    "restorade gold":
+    {
+        "id":10,
+        "pocket":"medicine",
+        "price":80,
+        "useOnField":true,
+        "useInBattle":true,
+        "usefunc":"use_heal",
+        "useArgs":100
+    },
+    "capsule":
+    {
+        "id":11,
+        "pocket":"capsules",
+        "price":10,
+        "useInBattle":true,
+        "usefunc":"use_capsule",
+        "useArgs":0
+    }
+}

@@ -45,6 +45,12 @@ typedef enum Direction{
     DIR_E
 }Direction;
 
+typedef enum GameState {
+    GAMESTATE_MENU,
+    GAMESTATE_FIELD,
+    GAMESTATE_BATTLE
+}GameState;
+
 #define ACTION_NONE 0X00
 #define ACTION_MOVE 0X01
 #define ACTION_TECH 0X02

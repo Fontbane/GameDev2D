@@ -1,0 +1,36 @@
+{
+    "names" :
+    [
+        "Sappurr",
+        "Dracamo",
+        "Vampiroot",
+        "Pyruff",
+        "Flarewolf",
+        "Lycarson",
+        "Squoink",
+        "Woghash",
+        "Soluboar",
+        "Egglet",
+        "Reagle",
+        "Reagalia",
+        "Mukchuk",
+        "Dirtskrt"
+    ],
+    "sprites" :
+    [
+        "images/battlers/sappurr/front.png",
+        "images/battlers/dracamo/front.png",
+        "images/battlers/vampiroot/front.png",
+        "images/battlers/pyruff/front.png",
+        "images/battlers/flarewolf/front.png",
+        "images/battlers/lycarson/front.png",
+        "images/battlers/squoink/front.png",
+        "images/battlers/woghash/front.png",
+        "images/battlers/soluboar/front.png",
+        "images/battlers/egglet/front.png",
+        "images/battlers/reagle/front.png",
+        "images/battlers/reagalia/front.png",
+        "images/battlers/mukchuk/front.png",
+        "images/battlers/dirtskrt/front.png"
+    ]
+}

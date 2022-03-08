@@ -19,8 +19,13 @@ typedef struct ITEM_S {
 	Pocket pocket;
 	Fruit crop;
 	CropType cropType;
+	u16 price;//times 10
 	u8 useOnField : 1;
 	u8 useInBattle : 1;
+	void(*Use)(u16 args);
 }Item;
+
+void GiveItem(u16 id);
+Item GetItemFromJson(u16 id);
 
 #endif // !__K_ITEM_H__

@@ -54,6 +54,7 @@ int main(int argc, char * argv[])
     };
 
     ent_manager_init(256);
+    monster_manager_init();
 
     player_init();
     ent_free(&HatKid);

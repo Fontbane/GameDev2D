@@ -66,7 +66,8 @@ typedef struct MonDict {
     u8 ability;     /*0x14*/
     u8 trait;       /*0x15*/
     u8 knack;       /*0x16*/
-    u8 shiny;       /*0x17*/
+    u8 shiny:1;       /*0x17*/
+    u8 id;
 
     u16 techniques[4];/*0x18*/
 
@@ -91,8 +92,7 @@ struct BaseStats {
     u8 hp; /*0x00*/
     u8 attack; /*0x01*/
     u8 defense; /*0x02*/
-    u8 m_atttack; /*0x03*/
-
+    u8 m_attack; /*0x03*/
     u8 m_defense; /*0x04*/
     u8 agility; /*0x05*/
     u8 type1;/*0x06*/
@@ -105,7 +105,7 @@ struct BaseStats {
     u16 matkYield : 2;
     u16 mdefYield : 2;
     u16 agiYield : 2;
-    u16 padding : 4;
+    u16 xpGrowth : 4;
 
     u8 ability1; /*0x0C*/
     u8 ability2; /*0x0D*/
@@ -136,14 +136,18 @@ struct BaseStats {
     u16 statsToInherit;/*0x1E*/
 };//Size: 0x20, 32 bytes
 
-#define GENDER_ALL_MALE 0
-#define GENDER_MALE_7_8TH 31
-#define GENDER_MALE_3_4TH 62
-#define GENDER_HALF 124
-#define GENDER_MALE_1_4TH 186
-#define GENDER_MALE_1_8TH 217
-#define GENDER_ALL_FEMALE 248
-#define GENDER_NONE 255
+#define GROWTH_SLOW         0
+#define GROWTH_MEDIUM       1
+#define GROWTH_FAST         2
+
+#define GENDER_ALL_MALE     0
+#define GENDER_MALE_7_8TH   31
+#define GENDER_MALE_3_4TH   62
+#define GENDER_HALF         124
+#define GENDER_MALE_1_4TH   186
+#define GENDER_MALE_1_8TH   217
+#define GENDER_ALL_FEMALE   248
+#define GENDER_NONE         255
 
 typedef struct levelTech {
     u8 level;
@@ -175,20 +179,39 @@ enum {
     FAM_DITTO
 };
 
+typedef enum Stat {
+    STAT_HP,
+    STAT_ATTACK,
+    STAT_DEFENSE,
+    STAT_MAGIC_ATTACK,
+    STAT_MAGIC_DEFENSE,
+    STAT_AGILITY,
+    STAT_NRG_START
+} Stat;
+
 
 #define NUM_SPECIES SPECIES_MAX
 
-
+extern const u32 LvToXP_Medium[101];
 
 extern const int gTypeMatchupTable[16][16];
 
-extern const struct BaseStats gBaseStats[NUM_SPECIES];
+extern const struct BaseStats *gBaseStats;
 
-void ExtractBaseStats(char* filename, u16 speciesID);
+extern const char* gBattlerSprites[NUM_SPECIES];
+
+const char* gMonsterNames[NUM_SPECIES];
+
+void ExtractBaseStats(char* filename);
+
+u16 CalculateStat(PersonalDict pers, Stat stat);
+u8 GetLevel(PersonalDict pers);
 
 PersonalDict* monster_new(u16 species, u8 level, u8 form, u32 personality);
+MonDict* mondict_new(u16 species, u8 level, u8 form, u8 flags, u8 ability, u16 techniques[4]);
 MonDict* monster_set_dict(PersonalDict* pers);
 PersonalDict* MonsterRead(char* filename);
 PersonalDict* MonsterSave(char* filename);
+void monster_manager_init();
 
 #endif

@@ -7,7 +7,7 @@
 
 
 MonDict GetParticipant(u8 who) {
-    return gBattle.participants[who];
+    return *gBattle.participants[who];
 }
 
 const int gTypeMatchupTable[16][16] = {//Effectiveness multiplier is this number divided by 2. Resistance is 1, SE is 4, immune is 0
@@ -28,6 +28,10 @@ const int gTypeMatchupTable[16][16] = {//Effectiveness multiplier is this number
     { 2,        2,      2,      2,      2,      2,      2,      4,      1,      2,      1,      2,      4,      2,      2,      2   },//BRAWL
     { 2,        0,      2,      2,      2,      2,      2,      1,      1,      2,      2,      1,      2,      0,      4,      2   },//GHOST
     { 2,        2,      1,      1,      1,      2,      1,      2,      2,      2,      2,      4,      2,      2,      2,      4   }//DRAGON
+};
+
+char* battlefieldbgs[FIELD_MAX] = {
+    "images/backgrounds/bf_plains.png"
 };
 
 u16 CalculateDamage(MonDict attacker, MonDict target, u16 techID, u8 dist) {
@@ -62,4 +66,15 @@ u16 DealDamage(MonDict attacker, MonDict target, u16 damage) {
     }
     target.currentHP -= damage;
     return damage;
+}
+
+void RenderBattlefield() {
+    Sprite* field;
+    Sprite *participants[4];
+    int i = 0;
+    field = gf2d_sprite_load_image(battlefieldbgs[gBattle.battleType]);
+    for (; i < gBattle.numMons; i++) {
+        participants[i] = gf2d_sprite_load_image(gBattlerSprites[gBattle.participants[i]->species]);
+    }
+
 }

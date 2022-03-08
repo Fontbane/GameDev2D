@@ -1,0 +1,54 @@
+{
+    "sappurr" : {
+        "species" : 1,
+        "hp" : 48,
+        "attack" : 60,
+        "defense" : 50,
+        "m_attack" : 40,
+        "m_defense" : 42,
+        "agility" : 72,
+        "type1" : "grass",
+        "gender_param" : 31
+    },
+    "pyruff" : {
+        "species" : 4,
+        "hp" : 50,
+        "attack" : 62,
+        "defense" : 50,
+        "m_attack" : 45,
+        "m_defense" : 45,
+        "agility" : 60,
+        "type1" : "fire",
+        "gender_param" : 31
+    },
+    "squoink" : {
+        "species" : 7,
+        "hp" : 60,
+        "attack" : 50,
+        "defense" : 48,
+        "m_attack" : 58,
+        "m_defense" : 46,
+        "agility" : 50,
+        "type1" : "water",
+        "height" : 4,
+        "weight" : 600,
+        "gender_param" : 31,
+        "sprite" : "images/battlers/squoink/front.png",
+        "shiny_palette":"images/battlers/squoink/shiny.pal"
+    },
+    "egglet" : {
+        "species" : 10,
+        "hp" : 52,
+        "attack" : 60,
+        "defense" : 45,
+        "m_attack" : 48,
+        "m_defense" : 45,
+        "agility" : 62,
+        "type1" : "air",
+        "height" : 4,
+        "weight" : 600,
+        "gender_param" : 31,
+        "sprite" : "images/battlers/egglet/front.png",
+        "shiny_palette":"images/battlers/egglet/shiny.pal"
+    }
+}
