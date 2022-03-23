@@ -1,5 +1,9 @@
 #include "simple_logger.h"
+#include "gf2d_graphics.h"
 
+#include "k_monster.h"
+#include "k_local.h"
+#include "k_item.h"
 #include "k_entity.h"
 #include "k_field.h"
 #include "k_save.h"
@@ -20,6 +24,7 @@ Edict* ent_new() {
 			entity_manager.entities[i].draw_scale.y = 1;
 			entity_manager.entities[i].draw_offset = vector2d(-8, 0);
 			entity_manager.entities[i].Think = ent_think_generic;
+			entity_manager.entities[i].OnCollide = ent_collide_generic;
 			slog("New entity created");
 			return &entity_manager.entities[i];
 		}
@@ -99,6 +104,24 @@ void ent_think_generic(Edict* ent) {
 
 }
 
+void ent_collide_generic(Edict* ent, Direction dir) {
+	switch (dir) {
+	case DIR_N:
+		ent->facing = DIR_S;
+		break;
+	case DIR_S:
+		ent->facing = DIR_N;
+		break;
+	case DIR_E:
+		ent->facing = DIR_W;
+		break;
+	case DIR_W:
+		ent->facing = DIR_E;
+	}
+
+	ent->OnTalk(ent, dir);
+}
+
 void ent_manager_think_all() {
 	u32 i;
 	for (i = 0; i < entity_manager.maxEnts; i++) {
@@ -151,9 +174,64 @@ void ent_move(Edict* ent) {
 	}
 }
 
+void coll_mukchuk(Edict* ent, Direction dir)
+{
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION,"","You found a Mukchuk!",NULL);
+	party.partyPersonal[4] = *monster_new(SPECIES_MUKCHUK, 10, 0, Random32());
+	party.party[4] = *monster_set_dict(party.partyPersonal + 4);
+	ent_free(ent);
+}
+void coll_tree(Edict* ent, Direction dir) {
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "", "You found a Sappurr!", NULL);
+	party.partyPersonal[1] = *monster_new(SPECIES_SAPPURR, 5, 0, Random32());
+	party.party[1] = *monster_set_dict(party.partyPersonal + 1);
+	ent_free(ent);
+}
+
+void talk_showme_egglet(Edict* ent, Direction dir) {
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Kid", "Can you show me an Egglet?", NULL);
+	if (party.partyPersonal[2].species == SPECIES_EGGLET) {
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Kid", "Oh, that's it! Here, take this!", NULL);
+		GiveItem("Restorade");
+	}
+}
+void talk_treehugger(Edict* ent, Direction dir) {
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Tree Guy", "Hey man, go touch that tree.", NULL);
+}
+void talk_find_mukchuk(Edict* ent, Direction dir) {
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Farmer", "There's a monster scurrying around underground. Try and find it for me.", NULL);
+}
+void talk_riddler(Edict* ent, Direction dir) {
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Other Kid", "Hey, what type is Egglet?",NULL);
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Other Kid", "That's right, Air!", NULL);
+	party.partyPersonal[2] = *monster_new(SPECIES_EGGLET, 5, 0, Random32());
+	party.party[2] = *monster_set_dict(party.partyPersonal + 2);
+}
+void talk_give_restorade(Edict* ent, Direction dir) {
+	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Fran", "Hey, my Squoink's low on health. Can you give me a Restorade?", NULL);
+	if (RemoveItem("Restorade")) {
+		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Fran", "Oh, thanks man, I owe you one! Here, have a Pyruff.", NULL);
+		party.partyPersonal[3] = *monster_new(SPECIES_PYRUFF, 5, 0, Random32());
+		party.party[3] = *monster_set_dict(party.partyPersonal + 3);
+	}
+}
+
+
 int Colliding(Rect a, Rect b) {
 	return SDL_HasIntersection(&a, &b);
 }
+
+u16 CheckEntCollision(Point8 pt, Direction dir) {
+	unsigned int i;
+	for (i = 0; i < entity_manager.maxEnts; i++) {
+		if (entity_manager.entities[i].inUse && entity_manager.entities[i].cellPos.x == pt.x && entity_manager.entities[i].cellPos.y == pt.y) {
+			entity_manager.entities[i].OnCollide(entity_manager.entities+i,dir);
+			return i;
+		}
+	}
+	return SDL_FALSE;
+}
+
 
 Point8 cell(s8 x, s8 y) {
 	Point8 c= { x, y };

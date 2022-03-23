@@ -8,6 +8,16 @@ u8 CoinFlip() {
 	return game.random & 0x000F;
 }
 
+u32 Random32() {
+	return (u32)(gfc_random()*SDL_MAX_UINT32);
+}
+
 void SeedRNG() {
-	game.randomSeed=(int)(gfc_random()*(2>>64));
+	game.randomSeed=(int)(gfc_random()*SDL_MAX_UINT64);
+}
+
+void game_init() {
+	game.steps = 0;
+	game.time = 0;
+	game.state = GAMESTATE_FIELD;
 }

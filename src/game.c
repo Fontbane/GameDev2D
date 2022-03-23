@@ -6,20 +6,23 @@
 
 #include "k_player.h"
 #include "k_save.h"
+#include "k_menu.h"
+#include "k_local.h"
+#include "k_battle.h"
 
 int main(int argc, char * argv[])
 {
     /*variable declarations*/
     int done = 0;
     const Uint8 * keys;
-    Sprite *sprite;
+    //Sprite *sprite;
 
     //save1 = LoadSave("save/save00.sav");
     
-    int mx,my;
-    float mf = 0;
-    Sprite *mouse;
-    Vector4D mouseColor = {255,100,255,200};
+    //int mx,my;
+    //float mf = 0;
+    //Sprite *mouse;
+    //Vector4D mouseColor = {255,100,255,200};
 
     Sprite* hatkid;
     
@@ -38,10 +41,10 @@ int main(int argc, char * argv[])
     gf2d_sprite_init(1024);
     SDL_ShowCursor(SDL_DISABLE);
     SetUpTilesets();
-    NewSave("saves/save1.sav");
+    NewSave("saves/save1.json");
     /*demo setup*/
-    sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
-    mouse = gf2d_sprite_load_all("images/pointer.png", 32, 32, 16);
+    //sprite = gf2d_sprite_load_image("images/backgrounds/bg_flat.png");
+    //mouse = gf2d_sprite_load_all("images/pointer.png", 32, 32, 16);
     hatkid = gf2d_sprite_load_all("images/objects/HatKid.png", 32, 32, 4);
 
 
@@ -58,10 +61,50 @@ int main(int argc, char * argv[])
 
     player_init();
     ent_free(&HatKid);
+    GiveDemoParty();
     boy = ent_new();
     boy->sprite = hatkid;
     boy->position = vector2d(128, 128);
-    //PrintLayout(save1.map);
+    boy->cellPos = cell(8, 8);
+    boy->OnTalk = talk_showme_egglet;
+    Edict* frankid, * farmer, * tree, * mukchuk, * treehugger, * riddler;
+    frankid = ent_new();
+    frankid->sprite = fran;
+    frankid->position = vector2d(80, 80);
+    frankid->cellPos = cell(5, 5);
+    frankid->OnTalk = talk_give_restorade;
+
+    farmer = ent_new();
+    farmer->sprite = hatkid;
+    farmer->position = vector2d(192, 160);
+    farmer->cellPos = cell(12, 10);
+    farmer->OnTalk = talk_find_mukchuk;
+    
+
+    treehugger = ent_new();
+    treehugger->sprite = hatkid;
+    treehugger->position = vector2d(128, 192);
+    treehugger->cellPos = cell(8, 12);
+    treehugger->OnTalk = talk_treehugger;
+
+
+    riddler = ent_new();
+    riddler->sprite = hatkid;
+    riddler->position = vector2d(176, 176);
+    riddler->cellPos = cell(11, 11);
+    riddler->OnTalk = talk_riddler;
+
+    tree = ent_new();
+    tree->position = vector2d(448, 256);
+    tree->cellPos = cell(27, 16);
+    tree->OnCollide = coll_tree;
+
+    mukchuk = ent_new();
+    mukchuk->position = vector2d(256, 256);
+    mukchuk->cellPos = cell(16, 16);
+    mukchuk->OnCollide = coll_mukchuk;
+
+    game_init();
     /*main game loop*/
     while(!done)
     {
@@ -70,54 +113,68 @@ int main(int argc, char * argv[])
         SDL_Event keyEvent;
         SDL_PollEvent(&keyEvent);
         /*update things here*/
-        SDL_GetMouseState(&mx,&my);
+        /*SDL_GetMouseState(&mx, &my);
         mf+=0.1;
         if (mf >= 16.0)mf = 0;
+        */
+        switch (game.state) {
+        case GAMESTATE_FIELD:
+            if (keys[SDL_SCANCODE_W]) {
+                player_move(player, cell(0, -1));
+                player->facing = DIR_N;
+            }
+            else if (keys[SDL_SCANCODE_S]) {
+                player_move(player, cell(0, 1));
+                player->facing = DIR_S;
+            }
+            else if (keys[SDL_SCANCODE_A]) {
+                player_move(player, cell(-1, 0));
+                player->facing = DIR_W;
+            }
+            else if (keys[SDL_SCANCODE_D]) {
+                player_move(player, cell(1, 0));
+                player->facing = DIR_E;
+            }
+            if (keyEvent.type == SDL_KEYDOWN && keys[SDL_SCANCODE_M]) {
+                if (boy->inUse) {
+                    slog("Free the boy");
+                    ent_free(boy);
+                    boy->inUse = 0;
+                }
+                else {
+                    slog("New boy");
+                    boy = ent_new();
+                    boy->sprite = hatkid;
+                    boy->position = vector2d(128, 128);
+                }
 
-        if (keys[SDL_SCANCODE_W]) {
-            player_move(player, cell(0,-1));
-            player->facing = DIR_N;
-        }
-        else if (keys[SDL_SCANCODE_S]) {
-            player_move(player, cell(0, 1));
-            player->facing = DIR_S;
-        }
-        else if (keys[SDL_SCANCODE_A]) {
-            player_move(player, cell(-1, 0));
-            player->facing = DIR_W;
-        }
-        else if (keys[SDL_SCANCODE_D]) {
-            player_move(player, cell(1, 0));
-            player->facing = DIR_E;
-        }
-        if (keyEvent.type==SDL_KEYDOWN&&keys[SDL_SCANCODE_M]) {
-            if (boy->inUse) {
-                slog("Free the boy");
-                ent_free(boy);
-                boy->inUse = 0;
             }
-            else {
-                slog("New boy");
-                boy = ent_new();
-                boy->sprite = hatkid;
-                boy->position = vector2d(128, 128);
-            }
+
+            ent_manager_think_all();
+
+            gf2d_graphics_clear_screen();// clears drawing buffers
+            // all drawing should happen betweem clear_screen and next_frame
+                //backgrounds drawn first
+            //gf2d_sprite_draw_image(sprite, vector2d(0, 0));
+            RenderMap(save1.map);
+
+            ent_manager_draw_all();
             
+            RenderMapLayer2(save1.map);
+
+            DrawHUD();
+            break;
+        case GAMESTATE_BATTLE:
+            gf2d_graphics_clear_screen();// clears drawing buffers
+            // all drawing should happen betweem clear_screen and next_frame
+                //backgrounds drawn first
+            //gf2d_sprite_draw_image(sprite, vector2d(0, 0));
+            
+            RenderBattlefield();
         }
-
-        ent_manager_think_all();
-        
-        gf2d_graphics_clear_screen();// clears drawing buffers
-        // all drawing should happen betweem clear_screen and next_frame
-            //backgrounds drawn first
-        //gf2d_sprite_draw_image(sprite, vector2d(0, 0));
-        RenderMap(save1.map);
-        
-
-        ent_manager_draw_all();
             
             //UI elements last
-            gf2d_sprite_draw(
+            /*gf2d_sprite_draw(
                 mouse,
                 vector2d(mx,my),
                 NULL,
@@ -125,7 +182,7 @@ int main(int argc, char * argv[])
                 NULL,
                 NULL,
                 &mouseColor,
-                (int)mf);
+                (int)mf);*/
         gf2d_grahics_next_frame();// render current draw frame and skip to the next frame
        
         if (keys[SDL_SCANCODE_ESCAPE])done = 1; // exit condition

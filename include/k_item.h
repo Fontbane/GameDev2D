@@ -3,6 +3,7 @@
 
 #include "k_crop.h"
 #include "k_global.h"
+#include "gfc_text.h"
 
 typedef enum {
 	POCKET_MISC,
@@ -16,16 +17,20 @@ typedef enum {
 
 typedef struct ITEM_S {
 	u16 id;
+	TextWord name;
 	Pocket pocket;
 	Fruit crop;
 	CropType cropType;
 	u16 price;//times 10
 	u8 useOnField : 1;
 	u8 useInBattle : 1;
-	void(*Use)(u16 args);
+	u16 useargs;
+	void (*Use)(struct ITEM_S* item);
 }Item;
 
-void GiveItem(u16 id);
-Item GetItemFromJson(u16 id);
+int RemoveItem(char *name);
+void GiveItem(char* name);
+Item GetItemFromJson(char* name);
+Item* gItems;
 
 #endif // !__K_ITEM_H__

@@ -10,14 +10,14 @@ void player_init() {
 	player = ent_new();
 	player->sprite = ben;//placeholder
 
-	player->position = vector2d(0,0);
-	player->targetPosition = vector2d(0,0);
-	player->cellPos = cell(0,0);
-	player->targetCell = cell(0, 0);
+	player->position = vector2d(160,160);
+	player->targetPosition = vector2d(160,160);
+	player->cellPos = cell(10,10);
+	player->targetCell = cell(10, 10);
 	player->draw_offset = vector2d(-8, 0);
 	player->Think = player_think;
 	player->inUse = 1;
-	player->z = 1;
+	player->z = 0;
 
 	slog("Player initialized");
 }
@@ -47,7 +47,8 @@ void player_think(Edict* self) {
 void player_move(Edict* ent, Point8 movement) {
 	cell_add(ent->targetCell, ent->cellPos, movement);
 	TileCollision coll = GetCollisionAt(save1.map, ent->targetCell);
-	if (coll == COLL_IMPASSIBLE || (coll != ent->z && coll != COLL_TRANSITION && ent->z != COLL_TRANSITION)) {
+	if (coll == COLL_IMPASSIBLE || (coll != ent->z && coll != COLL_TRANSITION && ent->z != COLL_TRANSITION) || 
+		CheckEntCollision(ent->targetCell,ent->facing)) {
 		ent->targetCell = ent->cellPos;
 		//slog("%d, %d", ent->z, coll);
 	}

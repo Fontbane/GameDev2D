@@ -112,9 +112,9 @@ typedef struct EDICT_S{
 	u16			moving : 1;
 
 	void (*Think)(struct EDICT_S* self);
-	void (*Move)(Direction dir);
-	void (*OnTalk)(Direction dir);
-	void (*OnCollide)(Direction dir);
+	void (*Move)(struct EDICT_S* self, Direction dir);
+	void (*OnTalk)(struct EDICT_S* self, Direction dir);
+	void (*OnCollide)(struct EDICT_S* self, Direction dir);
 } Edict;
 
 Edict *player;
@@ -133,6 +133,16 @@ void ent_manager_init(u32 maxEnts);
 void ent_manager_clear();
 
 void ent_think_generic(Edict* ent);
+void ent_collide_generic(Edict* ent, Direction dir);
+
+void coll_mukchuk(Edict* ent, Direction dir);
+void coll_tree(Edict* ent, Direction dir);
+
+void talk_showme_egglet(Edict* ent, Direction dir);
+void talk_treehugger(Edict* ent, Direction dir);
+void talk_find_mukchuk(Edict* ent, Direction dir);
+void talk_riddler(Edict* ent, Direction dir);
+void talk_give_restorade(Edict* ent, Direction dir);
 
 void ent_think(Edict* ent);
 void ent_manager_think_all();
@@ -149,5 +159,7 @@ void WarpPlayer(Warp warp);
 extern CropPlant PlantFruit(u8 fruitID);
 extern void WaterFruit(CropPlant* plant);
 extern void PickFruit(CropPlant* plant);
+
+u16 CheckEntCollision(Point8 pt, Direction dir);
 
 #endif

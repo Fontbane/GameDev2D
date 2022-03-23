@@ -11,6 +11,11 @@ typedef struct GameLocal {
 	Edict*	camera;
 	Edict*	player;
 	u32		steps;
+	int		camera_offset_x;
+	int		camera_offset_y;
+
+	GameState state;
+	Bool	lockall;
 
 	u64		randomSeed;
 	u64		random;
@@ -20,7 +25,10 @@ typedef struct GameLocal {
 
 
 extern u64 Random(u64 min, u64 max);
+extern u32 Random32();
 extern void SeedRNG();
+
+void game_init();
 
 GameLocal game;
 Map level;

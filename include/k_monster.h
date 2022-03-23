@@ -88,13 +88,17 @@ typedef struct MonDict {
 
 } MonDict;//Size: 0x2A 44 bytes
 
-struct BaseStats {
+typedef struct BaseStats {
+    const char* name;
+    const char* spritefile;
+
     u8 hp; /*0x00*/
     u8 attack; /*0x01*/
     u8 defense; /*0x02*/
     u8 m_attack; /*0x03*/
     u8 m_defense; /*0x04*/
     u8 agility; /*0x05*/
+
     u8 type1;/*0x06*/
     u8 type2;/*0x07*/
 
@@ -134,7 +138,7 @@ struct BaseStats {
     u8 forms;/*0x1C*/
     u8 flags;/*0x1D*/
     u16 statsToInherit;/*0x1E*/
-};//Size: 0x20, 32 bytes
+} BaseStats;//Size: 0x20, 32 bytes
 
 #define GROWTH_SLOW         0
 #define GROWTH_MEDIUM       1
@@ -196,11 +200,7 @@ extern const u32 LvToXP_Medium[101];
 
 extern const int gTypeMatchupTable[16][16];
 
-extern const struct BaseStats *gBaseStats;
-
-extern const char* gBattlerSprites[NUM_SPECIES];
-
-const char* gMonsterNames[NUM_SPECIES];
+extern const BaseStats gBaseStats[NUM_SPECIES];
 
 void ExtractBaseStats(char* filename);
 
@@ -213,5 +213,6 @@ MonDict* monster_set_dict(PersonalDict* pers);
 PersonalDict* MonsterRead(char* filename);
 PersonalDict* MonsterSave(char* filename);
 void monster_manager_init();
+void GiveDemoParty();
 
 #endif

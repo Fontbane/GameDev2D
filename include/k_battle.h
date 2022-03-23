@@ -23,7 +23,8 @@ typedef struct BattleRender {
 }BattleRender;
 
 typedef struct {
-    u8 fieldsize;
+    u8 fieldsizex;
+    u8 fieldsizey;
     u8 fieldtype;
     u8 battleType;
     u8 numMons;

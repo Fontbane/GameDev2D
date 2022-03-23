@@ -3,6 +3,8 @@
 
 #include "k_monster.h"
 #include "k_technique.h"
+#include "k_save.h"
+#include "k_local.h"
 
 
 
@@ -72,9 +74,27 @@ void RenderBattlefield() {
     Sprite* field;
     Sprite *participants[4];
     int i = 0;
-    field = gf2d_sprite_load_image(battlefieldbgs[gBattle.battleType]);
+    field = gf2d_sprite_load_image(battlefieldbgs[gBattle.fieldtype]);
     for (; i < gBattle.numMons; i++) {
-        participants[i] = gf2d_sprite_load_image(gBattlerSprites[gBattle.participants[i]->species]);
+        participants[i] = gf2d_sprite_load_image(gBaseStats[gBattle.participants[i]->species].spritefile);
     }
+    for (i = 0; i < gBattle.numMons; i++) {
+        gf2d_sprite_draw_image(participants[i], vector2d(gBattle.participants[i]->x*64, gBattle.participants[i]->y*64+128));
+    }
+}
 
+void StartWildBattle(u16 species, u8 level, u8 bg) {
+    MonDict* wild = monster_set_dict(monster_new(species, level, 0, Random32()));
+    gBattle.fieldsizex = 7;
+    gBattle.fieldsizey = 4;
+    gBattle.battleType = BATTLE_TYPE_WILD;
+    gBattle.fieldtype = bg;
+    gBattle.numMons = 2;
+    gBattle.turnCount = 0;
+    gBattle.participants[0] = &party.party[0];
+    gBattle.participants[1] = wild;
+    gBattle.participants[0]->x = 3;
+    gBattle.participants[0]->y = 2;
+    gBattle.participants[1]->x = 5;
+    gBattle.participants[1]->y = 2;
 }

@@ -1,6 +1,6 @@
-#include <stdio.h>
 #include "gf2d_graphics.h"
 #include "gf2d_sprite.h"
+#include "gfc_text.h"
 #include "simple_logger.h"
 #include "simple_json.h"
 
@@ -47,7 +47,7 @@ Block TallGrass = {
 
 void SetUpTilesets() {
 	gTilesets[0].sheet = gf2d_sprite_load_all("images/tiles/kt01.png", 16, 16, 16); //16 tiles wide 64 tiles tall
-	strcpy(gTilesets[0].filename, "images/tiles/kt01.png");
+	gfc_line_cpy(gTilesets[0].filename, "images/tiles/kt01.png");
 }
 
 static Vector2D tileScale = { 1, 1 };
@@ -65,40 +65,89 @@ Map* map_new() {
 }
 
 Map *LoadMap(const char* jsonfile) {
-	FILE* file;
-	u16* buff;
-	long length;
-
-	SJson* json;
+	SJson *json, *r, *c, *e;
 	char* spriteFile = NULL;
-	char* mapFile = NULL;
-	Map *map;
-	map = map_new();
-	slog(jsonfile);
+	Map *map = NULL;
+	int row, col, t;
+	MapTile tile=0;
+	TileCollision coll=0;
 	int height, width;
+
+	map = map_new();
+	if (!map)return NULL;
+	slog("attempting to load json file %s", jsonfile);
 	if (!jsonfile) return NULL;
 	json = sj_load(jsonfile);
 	if (!json) {
-		slog("Couldn't load map file");
+		slog("Couldn't load map file %s",jsonfile);
 		return NULL;
 	}
 	map->name = jsonfile;
 	spriteFile = sj_get_string_value(sj_object_get_value(json, "tileset"));
-	mapFile = sj_get_string_value(sj_object_get_value(json, "layout"));
 	sj_get_integer_value(sj_object_get_value(json, "height"), &height);
 	sj_get_integer_value(sj_object_get_value(json, "width"), &width);
-	map->height=height;
+	map->height = height;
 	map->width = width;
 
+	map->layout = (MapTile*)calloc(height*width,sizeof(MapTile));
+	map->layer2 = (MapTile*)calloc(height*width,sizeof(MapTile));
+	map->collision = (TileCollision*)calloc(height*width,sizeof(TileCollision));
+
+	for (t = 0, row = 0; row < height; row++) {
+		r = sj_array_get_nth(sj_object_get_value(json, "layer_1"), row);
+		for (col = 0; col < width; col++) {
+			sj_get_integer_value(sj_array_get_nth(r,col), map->layout+t++);
+		}
+	}
+	for (t = 0, row = 0; row < height; row++) {
+		r = sj_array_get_nth(sj_object_get_value(json, "layer_2"), row);
+		for (col = 0; col < width; col++) {
+			sj_get_integer_value(sj_array_get_nth(r, col), map->layer2+t++);
+		}
+	}
+	for (t = 0, row = 0; row < height; row++) {
+		r = sj_array_get_nth(sj_object_get_value(json, "collisions"), row);
+		for (col = 0; col < width; col++) {
+			sj_get_integer_value(sj_array_get_nth(r, col), map->collision+t++);
+		}
+	}
+
+	/*FILE* file;
+	u16 *buff, *buff2;
+	u8 *buffc;
+	long length;
+	
 	file = fopen(mapFile, "rb");
 	fseek(file, 0, SEEK_END);
 	length = ftell(file);
-	slog("%d", length);
+	slog("Read %d bytes for layout", length);
 	rewind(file);
 	buff = (u16*)malloc(length * sizeof(u16));
 	if (buff) fread(buff, length, 1, file);
 	fclose(file);
-	map->layout = (MapTile*) buff;
+	map->layout = buff;
+
+	mapFile = sj_get_string_value(sj_object_get_value(json, "layer2"));
+	file = fopen(mapFile, "rb");
+	fseek(file, 0, SEEK_END);
+	length = ftell(file);
+	slog("Read %d bytes for layer 2", length);
+	rewind(file);
+	buff2 = (u16*)malloc(length * sizeof(u16));
+	if (buff2) fread(buff2, length, 1, file);
+	fclose(file);
+	map->layer2 = buff2;
+
+	mapFile = sj_get_string_value(sj_object_get_value(json, "collision"));
+	file = fopen(mapFile, "rb");
+	fseek(file, 0, SEEK_END);
+	length = ftell(file);
+	slog("Read %d bytes for collision", length);
+	rewind(file);
+	buffc = (u8*)malloc(length * sizeof(u8));
+	if (buffc) fread(buffc, length, 1, file);
+	fclose(file);
+	map->collision = (TileCollision*)buffc;*/
 
 	map->tileset = gTilesets[0];
 
@@ -107,11 +156,10 @@ Map *LoadMap(const char* jsonfile) {
 }
 
 void RenderMap(Map* map) {
+	int y, x, t;
 	if (!map) return;
-	for (int y = 0; y < map->height; y++) {
-		for (int x = 0; x < map->width; x++) {
-			MapTile* block = &map->layout[y*map->width+x];
-			u16 collisions = block->collision;
+	for (t=0, y = 0; y < map->height; y++) {
+		for (x = 0; x < map->width; x++) {
 			gf2d_sprite_draw(
 				map->tileset.sheet,
 				vector2d(16 * x, 16 * y),
@@ -120,7 +168,29 @@ void RenderMap(Map* map) {
 				NULL,
 				NULL,
 				NULL,
-				block->blockID-256);
+				map->layout[t++]);
+		}
+	}
+}
+
+void RenderMapLayer2(Map* map) {
+	int x, y, t;
+	if (!map) return;
+	for (t=0, y = 0; y < map->height; y++) {
+		for (x = 0; x < map->width; x++) {
+			if (map->layer2[t] == 0) {
+				t++;
+				continue;
+			}
+			gf2d_sprite_draw(
+				map->tileset.sheet,
+				vector2d(16 * x, 16 * y),
+				&tileScale,
+				NULL,
+				NULL,
+				NULL,
+				NULL,
+				map->layer2[t++]);
 		}
 	}
 }
@@ -133,14 +203,14 @@ TileCollision GetCollisionAt(Map *map, Point8 position) {
 			return COLL_IMPASSIBLE;
 		}
 	}*/
-	return map->layout[position.y * map->width + position.x].collision;
+	return map->collision[position.y*map->width+position.x];
 }
 
 void PrintLayout(Map* map) {
 	int i, j;
 	for (i = 0; i < map->height; i++) {
 		for (j = 0; j < map->width; j++) {
-			slog("%d ",map->layout[i * map->width + j].collision);
+			slog("%d ",map->collision[i * map->width + j]);
 		}
 	}
 }

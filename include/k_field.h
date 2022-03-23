@@ -58,10 +58,7 @@ void tileset_load(char* filename);
 void tileset_free(Tileset tileset);
 void tileset_draw(Tileset tileset, u16 tile, Vector2D position);
 
-typedef struct MapTile_s{
-    u16 blockID:12;
-	u16 collision:4;
-} MapTile;
+typedef u16 MapTile;
 
 typedef struct MapConnection {
     u16     id;
@@ -69,8 +66,8 @@ typedef struct MapConnection {
 } MapConnection;
 
 typedef struct Encounter {
-    u16 species : 9;
-    u16 level : 7;
+    u8 species;
+    u8 level;
 } Encounter;
 
 
@@ -83,7 +80,7 @@ typedef struct Chunk {
 typedef struct Map{
 	u16             id;
     char*           name;
-	u16             outdoors : 1;
+	u8             outdoors : 1;
 	Tileset         tileset;
     MapConnection   north;
     MapConnection   south;
@@ -92,14 +89,16 @@ typedef struct Map{
     u8              height;
     u8              width;
     Block*          border;
-    Chunk*          chunks;
     Encounter       encounters[12]; //Array of 12 random encounters with odds
                                 //20% 20% 10% 10% 10% 10% 5% 5% 4% 4% 1% 1%
     Edict*          entities;
-    MapTile*        layout;
+    MapTile*       layout;
+    MapTile*       layer2;
+    TileCollision* collision;
 } Map;
 
 extern void RenderMap(Map* map);
+extern void RenderMapLayer2(Map* map);
 Map* LoadMap(const char* jsonfile);
 
 TileCollision GetCollisionAt(Map *map, Point8 position);

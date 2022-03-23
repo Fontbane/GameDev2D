@@ -48,6 +48,9 @@ void NewSave(char* filename) {
 		slog(save1.map->tileset.filename);
 	}
 
+	party.party = gfc_allocate_array(sizeof(MonDict),6);
+	party.partyPersonal = gfc_allocate_array(sizeof(PersonalDict), 6);
+
 	sj_object_insert(json, "time", sj_new_str("0"));
 	sj_object_insert(json, "map", sj_new_str("maps/testfield.json"));
 	sj_object_insert(json, "player_name", sj_new_str(save1.client.name));
@@ -68,7 +71,7 @@ void WriteSave(char* filename) {
 	json = sj_load(filename);
 	if (!json) return;
 
-	sj_string_set(str, SDL_lltoa(save1.playTime,buff,10));
+	/*sj_string_set(str, SDL_lltoa(save1.playTime,buff,10));
 	sj_object_insert(json, "time", sj_string_to_value(str));
 	sj_string_set(str, save1.map->name);
 	sj_object_insert(json, "map", sj_string_to_value(str));
@@ -82,6 +85,6 @@ void WriteSave(char* filename) {
 
 	sj_save(json, filename);
 
-	sj_string_free(str);
+	sj_string_free(str);*/
 	sj_free(json);
 }
