@@ -1,0 +1,35 @@
+{
+    "msgbox_window_looking_good":{
+        "text":"text_window_looking_good"
+    },
+    "msgbox_mom_bye":{
+        "title":"title_mom",
+        "sprite":"images/headshots/mom.png",
+        "text":"text_mom_bye"
+    },
+    "msgbox_thomas_oatwheel_attacked":{
+        "title":"title_thomas",
+        "sprite":"images/headshots/thomas_worried.png",
+        "text":"text_thomas_oatwheel_danger"
+    },
+    "multis_starter_choose":{
+        "prompt":"text_starter_choose",
+        "options":[
+            {
+                "title":"name_sappurr",
+                "sprite":"images/battlers/Sappurr/front.png",
+                "text":"text_sappurr_desc"
+            },
+            {
+                "title":"name_pyruff",
+                "text":"text_pyruff_desc",
+                "sprite":"images/battlers/Pyruff/front.png"
+            },
+            {
+                "title":"name_squoink",
+                "sprite":"images/battlers/Squoink/front.png",
+                "text":"text_squoink_desc"
+            }
+        ]
+    }
+}

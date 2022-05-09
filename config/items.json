@@ -2,12 +2,14 @@
     "nugget":
     {
         "id": 1,
+        "name":"text_nugget",
         "pocket": "treasure",
         "price": 500
     },
     "protein powder":
     {
         "id":2,
+        "name":"text_protein",
         "pocket":"medicine",
         "price":400,
         "useOnField":true,
@@ -17,6 +19,7 @@
     "calcium tablet":
     {
         "id":3,
+        "name":"text_calcium",
         "pocket":"medicine",
         "price":400,
         "useOnField":true,
@@ -26,6 +29,7 @@
     "mystic powder":
     {
         "id":4,
+        "name":"text_mysticpowder",
         "pocket":"medicine",
         "price":400,
         "useOnField":true,
@@ -35,6 +39,7 @@
     "zinc":
     {
         "id":5,
+        "name":"text_zinc",
         "pocket":"medicine",
         "price":400,
         "useOnField":true,
@@ -44,6 +49,7 @@
     "sugar_packet":
     {
         "id":6,
+        "name":"text_sugar",
         "pocket":"medicine",
         "price":400,
         "useOnField":true,
@@ -53,6 +59,7 @@
     "milk":
     {
         "id":7,
+        "name":"text_milk",
         "pocket":"medicine",
         "price":400,
         "useOnField":true,
@@ -62,6 +69,7 @@
     "restorade":
     {
         "id":8,
+        "name":"text_restorade",
         "pocket":"medicine",
         "price":20,
         "useOnField":true,
@@ -72,6 +80,7 @@
     "restorade plus":
     {
         "id":9,
+        "name":"text_restoradep",
         "pocket":"medicine",
         "price":40,
         "useOnField":true,
@@ -82,6 +91,7 @@
     "restorade gold":
     {
         "id":10,
+        "name":"text_restoradeg",
         "pocket":"medicine",
         "price":80,
         "useOnField":true,
@@ -92,6 +102,7 @@
     "capsule":
     {
         "id":11,
+        "name":"text_capsule",
         "pocket":"capsules",
         "price":10,
         "useInBattle":true,

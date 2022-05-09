@@ -11,9 +11,7 @@ typedef signed char s8;
 typedef short s16;
 typedef long s32;
 
-typedef SDL_Point Point;
-typedef SDL_Rect Rect;
-typedef struct { s8 x, y; } Point8;
+typedef struct { s8 x, y; } Point8; 
 typedef struct { u8 x, y, w, h; } Rect8;
 
 #define HIHALF(x) x>>4

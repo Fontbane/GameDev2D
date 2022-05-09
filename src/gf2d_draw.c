@@ -44,19 +44,34 @@ void gf2d_draw_line(Vector2D p1,Vector2D p2, Vector4D color)
                            255);
 }
 
-void gf2d_draw_rect(SDL_Rect rect,Vector4D color)
+void gf2d_draw_rect(SDL_Rect rect, Color color)
 {
     SDL_SetRenderDrawColor(gf2d_graphics_get_renderer(),
-                           color.x,
-                           color.y,
-                           color.z,
-                           color.w);
+                           color.r,
+                           color.g,
+                           color.b,
+                           color.a);
     SDL_RenderDrawRect(gf2d_graphics_get_renderer(),(const struct SDL_Rect *)&rect);
     SDL_SetRenderDrawColor(gf2d_graphics_get_renderer(),
                            255,
                            255,
                            255,
                            255);
+}
+
+void gf2d_draw_rect_filled(SDL_Rect rect, Color color)
+{
+    SDL_SetRenderDrawColor(gf2d_graphics_get_renderer(),
+        color.r,
+        color.g,
+        color.b,
+        color.a);
+    SDL_RenderFillRect(gf2d_graphics_get_renderer(), (const struct SDL_Rect*)&rect);
+    SDL_SetRenderDrawColor(gf2d_graphics_get_renderer(),
+        255,
+        255,
+        255,
+        255);
 }
 
 void gf2d_draw_rects(SDL_Rect *rects,Uint32 count,Vector4D color)

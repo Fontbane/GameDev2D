@@ -39,7 +39,7 @@ void NewSave(char* filename) {
 	save1.client.gender = 0;//Placeholder
 	save1.position = cell(0,0);
 	slog("Initializing save");
-	save1.map = LoadMap("maps/testfield.json");
+	save1.map = LoadMap("maps/oatwheeltown.json");
 	if (save1.map == NULL) {
 		slog("Map not loaded");
 	}
@@ -48,11 +48,13 @@ void NewSave(char* filename) {
 		slog(save1.map->tileset.filename);
 	}
 
-	party.party = gfc_allocate_array(sizeof(MonDict),6);
+	save1.inventory = gfc_allocate_array(sizeof(u16), ITEM_MAX);
+
+	party.party = gfc_allocate_array(sizeof(MonDict), 6);
 	party.partyPersonal = gfc_allocate_array(sizeof(PersonalDict), 6);
 
 	sj_object_insert(json, "time", sj_new_str("0"));
-	sj_object_insert(json, "map", sj_new_str("maps/testfield.json"));
+	sj_object_insert(json, "map", sj_new_str("maps/oatwheeltown.json"));
 	sj_object_insert(json, "player_name", sj_new_str(save1.client.name));
 	sj_object_insert(json, "player_id", sj_new_int(save1.client.id));
 	sj_object_insert(json, "gender", sj_new_bool(save1.client.gender));

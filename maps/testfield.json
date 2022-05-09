@@ -44,7 +44,20 @@
             "level":5
         }
     ],
-    "events":[
+    "signposts":[
+        {
+            "border":"road",
+            "text":"text_amhills_desc"
+        }
+    ],
+    "items":[
+        {
+            "globalID":1,
+            "itemID":"item_restorade",
+            "hidden":false
+        }
+    ],
+    "npcs":[
         {
             "id":1,
             "sprite":"images/objects/boy.png",
@@ -54,6 +67,23 @@
             "facing":"south",
             "think":"generic_think",
             "ontalk":"boy_talk"
+        }
+    ],
+    "triggers":[
+        {
+            "id":1,
+            "oncollide":"trigger_x"
+        }
+    ],
+    "warps":[
+        {
+            "id":1,
+            "dst":2
+        },
+        {
+            "id":2,
+            "dst":1,
+            "fade":true
         }
     ],
     "layer_1":[

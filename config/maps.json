@@ -1,0 +1,13 @@
+{
+    "oatwheel_town":"maps/oatwheel_town.json",
+    "amaranth_campus":"maps/amaranth_campus.json",
+    "amaranth_hills":"maps/amaranth_hills.json",
+    "camphoran_plains":"maps/camphoran_plains.json",
+    "campho_campground":"maps/campho_campground.json",
+    "campho_woods":"maps/campho_woods.json",
+    "honey_grove":"maps/honey_grove.json",
+
+    "oatwheel_indoor":"maps/oatwheel_indoor.json",
+    "tenon_labs":"maps/tenon_labs.json",
+    "amaranth_indoor":"maps/amaranth_indoor.json"
+}

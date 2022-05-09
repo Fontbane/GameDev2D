@@ -41,13 +41,31 @@ MONSTERDATA* monster_get_by_name(const char* name)
 }
 
 u8 GetLevel(PersonalDict pers) {
-	return (u8)SDL_sqrt(pers.exp);
+	switch (gBaseStats[pers.species].xpGrowth) {
+		case GROWTH_SLOW:
+			return (u8)(cbrt(pers.exp)*4/5);
+		case GROWTH_FAST:
+			return (u8)(cbrt(pers.exp)*6/5);
+		case GROWTH_MEDIUM:
+		default:
+			return (u8)cbrt(pers.exp);
+	}
 }
 
 MonsterManager monsterManager;
 
 const Technique gTechniques[NUM_TECHNIQUES] = {
-	[TECH_NONE] = {0}
+	{0},
+	{
+		"Scratch",
+		.range = 4,
+		.type = T_BASIC,
+		.category = CAT_PHYSICAL,
+		.power = 30,
+		.nrgcost = -2,
+		.effect = TEFFECT_HIT
+	},
+	{0}
 
 };
 
@@ -55,7 +73,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	{0},
 	{
 		"Sappurr",
-		"images/battlers/Sappurr/front.png",
 
 		.hp = 48,
 		.attack = 60,
@@ -75,7 +92,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 		.catchrate = 45
 	},{
 		"Camofline",
-		"images/battlers/Sappurr/front.png",
 
 		.hp = 48,
 		.attack = 60,
@@ -95,7 +111,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 		.catchrate = 45
 	},{
 		"Vampiroot",
-		"images/battlers/Sappurr/front.png",
 
 		.hp = 76,
 		.attack = 105,
@@ -117,7 +132,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Pyruff",
-		"images/battlers/Pyruff/front.png",
 
 		.hp = 50,
 		.attack = 62,
@@ -135,7 +149,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Flarewolf",
-		"images/battlers/Pyruff/front.png",
 
 		.hp = 50,
 		.attack = 62,
@@ -153,7 +166,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Lycarson",
-		"images/battlers/Pyruff/front.png",
 
 		.hp = 83,
 		.attack = 102,
@@ -171,7 +183,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Squoink",
-		"images/battlers/Squoink/front.png",
 		58,
 		50,
 		50,
@@ -183,7 +194,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Woghash",
-		"images/battlers/Squoink/front.png",
 		58,
 		50,
 		50,
@@ -195,7 +205,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Soluboar",
-		"images/battlers/Squoink/front.png",
 		100,
 		80,
 		80,
@@ -208,7 +217,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Egglet",
-		"images/battlers/Egglet/front.png",
 		50,
 		54,
 		50,
@@ -220,7 +228,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Reagle",
-		"images/battlers/Egglet/front.png",
 		50,
 		54,
 		50,
@@ -232,7 +239,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Reagalia",
-		"images/battlers/Egglet/front.png",
 		80,
 		110,
 		80,
@@ -244,7 +250,6 @@ const struct BaseStats gBaseStats[NUM_SPECIES] = {
 	},
 	{
 		"Mukchuk",
-		"images/battlers/Egglet/front.png",
 		40,
 		50,
 		35,
@@ -347,8 +352,10 @@ void mondict_free(MonDict* mon) {
 
 void GiveDemoParty() {
 	party.partyPersonal[0] = *monster_new(SPECIES_SQUOINK, 5, 0, Random32());
+	party.partyPersonal[1] = *monster_new(SPECIES_SQUOINK, 5, 0, Random32());
 	int i;
-	for (i = 0; i < 1; i++) {
+	for (i = 0; i < 2; i++) {
 		party.party[i] = *monster_set_dict(party.partyPersonal + i);
 	}
+	party.party[1].shiny = 1;
 }

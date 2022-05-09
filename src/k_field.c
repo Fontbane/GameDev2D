@@ -65,10 +65,10 @@ Map* map_new() {
 }
 
 Map *LoadMap(const char* jsonfile) {
-	SJson *json, *r, *c, *e;
+	SJson *json;
 	char* spriteFile = NULL;
 	Map *map = NULL;
-	int row, col, t;
+	int t;
 	MapTile tile=0;
 	TileCollision coll=0;
 	int height, width;
@@ -88,29 +88,21 @@ Map *LoadMap(const char* jsonfile) {
 	sj_get_integer_value(sj_object_get_value(json, "width"), &width);
 	map->height = height;
 	map->width = width;
-
 	map->layout = (MapTile*)calloc(height*width,sizeof(MapTile));
 	map->layer2 = (MapTile*)calloc(height*width,sizeof(MapTile));
 	map->collision = (TileCollision*)calloc(height*width,sizeof(TileCollision));
 
-	for (t = 0, row = 0; row < height; row++) {
-		r = sj_array_get_nth(sj_object_get_value(json, "layer_1"), row);
-		for (col = 0; col < width; col++) {
-			sj_get_integer_value(sj_array_get_nth(r,col), map->layout+t++);
-		}
+	for (t = 0; t < height * width; t++) {
+		sj_get_integer_value(sj_array_get_nth(sj_object_get_value(json, "layer_1"),t), map->layout + t);
 	}
-	for (t = 0, row = 0; row < height; row++) {
-		r = sj_array_get_nth(sj_object_get_value(json, "layer_2"), row);
-		for (col = 0; col < width; col++) {
-			sj_get_integer_value(sj_array_get_nth(r, col), map->layer2+t++);
-		}
+	for (t = 0; t < height * width; t++) {
+		sj_get_integer_value(sj_array_get_nth(sj_object_get_value(json, "layer_2"), t), map->layer2 + t);
 	}
-	for (t = 0, row = 0; row < height; row++) {
-		r = sj_array_get_nth(sj_object_get_value(json, "collisions"), row);
-		for (col = 0; col < width; col++) {
-			sj_get_integer_value(sj_array_get_nth(r, col), map->collision+t++);
-		}
+	for (t = 0; t < height * width; t++) {
+		sj_get_integer_value(sj_array_get_nth(sj_object_get_value(json, "collisions"), t), map->collision + t);
 	}
+
+	LoadEntitiesFromJson(json);
 
 	/*FILE* file;
 	u16 *buff, *buff2;
@@ -156,53 +148,46 @@ Map *LoadMap(const char* jsonfile) {
 }
 
 void RenderMap(Map* map) {
-	int y, x, t;
+	int y, x, ry, rx, t;
 	if (!map) return;
-	for (t=0, y = 0; y < map->height; y++) {
-		for (x = 0; x < map->width; x++) {
+	for (ry=0, y = max(player->cellPos.y-6,0); y < min(player->cellPos.y + 6,map->height); ry++, y++) {
+		for (rx=0, x = max(player->cellPos.x - 8,0), t=y*map->width+x; x < min(player->cellPos.x + 8,map->width); rx++, x++, t++) {
 			gf2d_sprite_draw(
 				map->tileset.sheet,
-				vector2d(16 * x, 16 * y),
+				vector2d(16 * rx, 16 * ry),
 				&tileScale,
 				NULL,
 				NULL,
 				NULL,
 				NULL,
-				map->layout[t++]);
+				map->layout[t]-1);
 		}
 	}
 }
 
 void RenderMapLayer2(Map* map) {
-	int x, y, t;
+	int y, x, ry, rx, t;
 	if (!map) return;
-	for (t=0, y = 0; y < map->height; y++) {
-		for (x = 0; x < map->width; x++) {
+	for (ry = 0, y = max(player->cellPos.y - 6, 0); y < min(player->cellPos.y + 6, map->height); ry++, y++) {
+		for (rx = 0, x = max(player->cellPos.x - 8, 0), t = y * map->width + x; x < min(player->cellPos.x + 8, map->width); rx++, x++) {
 			if (map->layer2[t] == 0) {
-				t++;
 				continue;
 			}
 			gf2d_sprite_draw(
 				map->tileset.sheet,
-				vector2d(16 * x, 16 * y),
+				vector2d(16 * rx, 16 * ry),
 				&tileScale,
 				NULL,
 				NULL,
 				NULL,
 				NULL,
-				map->layer2[t++]);
+				map->layer2[t++]-1);
 		}
 	}
 }
 
 TileCollision GetCollisionAt(Map *map, Point8 position) {
-	/*Chunk chunk = map->chunks[position.y * map->width / 256 + position.x / 16];
-	int i;
-	for (i = 0; i < chunk.numEnts; i++) {
-		if (chunk.localents[i].cellPos.x == position.x && chunk.localents[i].cellPos.y == position.y && chunk.localents[i].collidable) {
-			return COLL_IMPASSIBLE;
-		}
-	}*/
+	if (!map) return 0;
 	return map->collision[position.y*map->width+position.x];
 }
 

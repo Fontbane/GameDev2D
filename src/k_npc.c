@@ -1,7 +1,9 @@
+#include "queue.h"
 #include "k_npc.h"
+#include "k_event_scripts.h"
 
 void tamer_think(Edict* self) {
-	u8 sight = self->info->n.sight;
+	u8 sight = self->info.n.sight;
 	switch (self->facing) {
 		case DIR_N:
 		case DIR_S:
@@ -17,7 +19,11 @@ void tamer_think(Edict* self) {
 }
 
 void tamer_see(Edict* self, Edict* other) {
-
+	char* buff="text_tamer_000_before";
+	lockall();
+	setmovement(self, (Point8){ self->cellPos.x - other->cellPos.x, self->cellPos.y - other->cellPos.y });
+	sprintf(buff, "text_tamer_%i_before", self->info.n.tamerID);
+	msgbox(buff);
 }
 
 void tamer_fight(Edict* self) {

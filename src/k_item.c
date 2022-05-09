@@ -1,7 +1,25 @@
 #include "simple_json.h"
+#include "simple_logger.h"
 
 #include "k_save.h"
 #include "k_item.h"
+#include "k_hud.h"
+
+TextLine gItemInternal[ITEM_MAX] = {
+	"None",
+	"restorade",
+	"restorade plus",
+	"restorade gold",
+	"milk",
+	"protein powder",
+	"calcium tablet",
+	"mystic powder",
+	"zinc",
+	"sugar packet",
+	"capsule",
+	"nugget",
+	"pearl"
+};
 
 void item_use_heal(Item* item) {
 
@@ -11,26 +29,26 @@ void item_use_capsule(Item* item) {
 
 }
 
-int RemoveItem(char* name) {
-	if (SDL_strcmp(save1.inventory[0].name, name) == 0)
-		return 1;
+int RemoveItem(u16 itemID) {
+	if (save1.inventory[itemID]>0)
+		return save1.inventory[itemID]--;
 	else return 0;
 }
 
-void GiveItem(char* name) {
-	save1.inventory[0] = GetItemFromJson(name);
-	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Item Get", name, NULL);
+void GiveItem(u16 itemID) {
+	save1.inventory[itemID]++;
+	msgbox("text_itemget");
+	msgbox(GetItemFromJson(itemID).name);
 };
 
-Item GetItemFromJson(char* name) {
+Item GetItemFromJson(u16 itemID) {
 	SJson* json;
 	Item* i;
 	i = (Item*)malloc(sizeof(Item));
-	if (i == NULL) return;
+	if (i == NULL) return (Item){ 0 };
 	json = sj_object_new();
 	json = sj_load("config/items.json");
-	gfc_word_cpy(i->name,name);
-	json = sj_object_get_value(json, name);
+	json = sj_object_get_value(json, gItemInternal[itemID]);
 	sj_get_integer_value(sj_object_get_value(json, "id"), &i->id);
 	if (sj_object_get_value(json, "useInBattle")) i->useInBattle = true;
 	if (sj_object_get_value(json, "useOnField")) i->useOnField = true;
@@ -41,4 +59,14 @@ Item GetItemFromJson(char* name) {
 	if (SDL_strcmp(usefunc, "use_heal")==0) i->Use = item_use_heal;
 	if (SDL_strcmp(usefunc, "use_capsule") == 0) i->Use = item_use_capsule;
 	return *i;
+}
+
+u16 ItemIDFromJson(char* name) {
+	SJson* json;
+	slog("Getting id for %s", name);
+	int id=0;
+	json = sj_object_new();
+	json = sj_load("config/items.json");
+	sj_get_integer_value(sj_object_get_value(json, "name"), &id);
+	return (u16)id;
 }

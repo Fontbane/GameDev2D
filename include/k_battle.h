@@ -10,11 +10,19 @@ typedef struct {
     MonDict party[6];
 } Tamer;
 
+typedef struct {
+    u8 id;
+    TextWord title;
+    Sprite* sprite;
+    u8 ai;
+    u8 payout;
+} TamerClass;
+
 struct AITamer {
     u16 item : 12;
     u16 itemCount : 4;
     u8 aiFlags;
-}AITamer;
+};
 
 typedef struct BattleRender {
     Sprite* bg;
@@ -57,10 +65,10 @@ typedef struct BattlefieldState {
 }BattlefieldState;
 typedef struct Action {
     u8 who;
-    Vector2D startPos;
-    Vector2D movePos;
+    Point startPos;
+    Point movePos;
     u16 tech;
-    Vector2D targetPos;
+    Point targetPos;
     u8 actionFlag;
 }Action;
 

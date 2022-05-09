@@ -11,6 +11,7 @@
 #include "k_global.h"
 #include "k_crop.h"
 #include "queue.h"
+#include "simple_json.h"
 
 Point8 cell(s8 x, s8 y);
 
@@ -18,14 +19,18 @@ Point8 world_to_cell(Vector2D pos);
 Vector2D cell_to_world(Point8 pos);
 
 typedef struct WARP_S {
-	u16 mapID; //0 to stay on the same map
+	char* mapID; //0 to stay on the same map
+	u8 id;
 	u8 connection; //the id of them warp this one connects to
-	u8 warpEffect; //any special fx the warp does, like spinning the player
+	u8 fadeToBlack : 1;
+	u8 fadeToWhite : 1;
+	u8 spin : 1;
 } Warp;
 
 typedef struct NPC {
-	u16 tamerID; //Also used for items
-	u8 sight;
+	u16 globalFlagID;
+	u16 tamerID;//also: item id
+	u8 sight;//also: hidden?
 } NPC;
 
 typedef struct CropPlant {
@@ -49,12 +54,19 @@ typedef struct Player {
 	u8 costume : 7;
 } Player;
 
+typedef struct Signpost {
+	char* border;
+	TextWord title;
+	TextLine text;
+}Signpost;
+
 typedef union EventInfo {
 	Player p;
 	Warp w;
 	Camera c;
 	NPC n;
 	CropPlant f;
+	Signpost s;
 }EventInfo;
 
 typedef struct MovementInfo {
@@ -80,7 +92,10 @@ enum {
 	EV_CROP,
 	EV_CAMERA,
 	EV_ITEM,
-	EV_TAMER
+	EV_TAMER,
+	EV_WARP,
+	EV_SIGNPOST,
+	EV_TRIGGER
 };
 
 typedef struct EDICT_S{
@@ -101,15 +116,14 @@ typedef struct EDICT_S{
 	Direction	facing;
 	float		frame;
 
-	EventInfo*	info;
-	MovementInfo moveinfo;
+	EventInfo	info;
 	float		velocity;
-	Queue		moveq;
+	Queue*		moveq;
 
 	/*FLAGS*/
 	u16			inUse : 1;
 	u16			collidable : 1;
-	u16			moving : 1;
+	u8			moving;
 
 	void (*Think)(struct EDICT_S* self);
 	void (*Move)(struct EDICT_S* self, Direction dir);
@@ -121,6 +135,8 @@ Edict *player;
 Edict *boy;
 
 Edict* ent_new();
+
+void setmovement(Edict* ent, Point8 mvmt);
 
 void ent_move(Edict* ent);
 
@@ -161,5 +177,7 @@ extern void WaterFruit(CropPlant* plant);
 extern void PickFruit(CropPlant* plant);
 
 u16 CheckEntCollision(Point8 pt, Direction dir);
+
+void LoadEntitiesFromJson(SJson *json);
 
 #endif

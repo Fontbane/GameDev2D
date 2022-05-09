@@ -38,6 +38,8 @@ void gf2d_graphics_set_frame_delay(Uint32 frameDelay);
  */
 float gf2d_graphics_get_frames_per_second();
 
+Vector2D gf2d_graphics_get_resolution();
+
 /**
  * @brief get the current rendering context
  * @return NULL on error or the current rendering context

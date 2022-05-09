@@ -10,19 +10,25 @@ typedef enum {
 } Category;
 
 typedef struct Technique {
-    u16 id;
+    char* id;
     u8 range : 4;
     u8 radius : 4;
     Type type;
     Category category;
     u8 power;
-    u8 nrgThresh;
     s8 nrgcost;
     u8 effect;
     u8 effectchance;
     u8 args;
     u16 flags;
 } Technique;
+
+#define TFLAG_CONTACT       0x0001
+#define TFLAG_PROTECTABLE   0x0002
+#define TFLAG_SOUND         0x0004
+#define TFLAG_PROJECTILE    0x0008
+#define TFLAG_CONE          0x0010
+#define TFLAG_CIRCLE        0x0020
 
 #define TMASK_MYSTERY   1
 #define TMASK_BASIC     2
@@ -94,7 +100,8 @@ enum {
     TEFFECT_STATUS,
     TEFFECT_STAT_UP,
     TEFFECT_TARG_STAT_DROP,
-    TEFFECT_TOP_DOWN
+    TEFFECT_TOP_DOWN,
+    TEFFECT_RECOIL
 };
 
 #define NUM_TECHNIQUES 250

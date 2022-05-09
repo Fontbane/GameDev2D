@@ -2,12 +2,13 @@
 
 Queue* newq()
 {
-	Queue queue;
-	queue.q = gfc_allocate_array(sizeof(Point8), 12);
-	queue.front = 0;
-	queue.end = 0;
-	queue.count = 0;
-	return &queue;
+	Queue* queue = (Queue*)malloc(sizeof(Queue));
+	if (!queue) return NULL;
+	queue->q = gfc_allocate_array(sizeof(Point8), 12);
+	queue->front = 0;
+	queue->end = 0;
+	queue->count = 0;
+	return queue;
 }
 
 Point8 peek(Queue* qu) {
@@ -41,4 +42,11 @@ Point8 pop(Queue* qu) {
 	}
 	qu->count--;
 	return data;
+}
+
+void qclear(Queue* qu) {
+	qu->q = gfc_allocate_array(sizeof(Point8), 12);
+	qu->front = 0;
+	qu->end = 0;
+	qu->count = 0;
 }

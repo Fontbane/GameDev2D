@@ -15,8 +15,8 @@ Queue* newq();
 Point8 peek(Queue* qu);
 u8 empty(Queue* qu);
 u8 full(Queue* qu);
-u8 enque(Queue* qu, u8 data);
+u8 enque(Queue* qu, Point8 data);
 Point8 pop(Queue* qu);
-
+void qclear(Queue* qu);
 
 #endif

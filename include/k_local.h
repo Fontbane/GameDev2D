@@ -2,6 +2,7 @@
 #define __LOCAL_H__
 
 #include "k_field.h"
+#include "gf2d_windows.h"
 
 typedef struct GameLocal {
 	u64		framenum;
@@ -19,6 +20,8 @@ typedef struct GameLocal {
 
 	u64		randomSeed;
 	u64		random;
+
+	Window* hud;
 
 } GameLocal;
 

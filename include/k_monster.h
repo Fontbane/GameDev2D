@@ -90,7 +90,6 @@ typedef struct MonDict {
 
 typedef struct BaseStats {
     const char* name;
-    const char* spritefile;
 
     u8 hp; /*0x00*/
     u8 attack; /*0x01*/

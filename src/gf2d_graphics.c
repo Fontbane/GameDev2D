@@ -27,6 +27,8 @@ typedef struct
     Uint32 gmask;
     Uint32 bmask;
     Uint32 amask;
+    Uint32 renderWidth;
+    Uint32 renderHeight;
 }Graphics;
 
 /*local gobals*/
@@ -109,6 +111,8 @@ void gf2d_graphics_initialize(
                                     &gf2d_graphics.bmask,
                                     &gf2d_graphics.amask);
 
+    gf2d_graphics.renderWidth = renderWidth;
+    gf2d_graphics.renderHeight = renderHeight;
     
     gf2d_graphics.surface = SDL_CreateRGBSurface(0, renderWidth, renderHeight, gf2d_graphics.bitdepth,
                                         gf2d_graphics.rmask,
@@ -161,6 +165,11 @@ void gf2d_graphics_close()
     gf2d_graphics.temp_buffer = NULL;
 
     slog("graphics closed");
+}
+
+Vector2D gf2d_graphics_get_resolution()
+{
+    return vector2d(gf2d_graphics.renderWidth, gf2d_graphics.renderHeight);
 }
 
 SDL_Renderer *gf2d_graphics_get_renderer()

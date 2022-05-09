@@ -3,7 +3,8 @@
 
 #include "gfc_text.h"
 #include "gf2d_sprite.h"
+#include "k_global.h"
 
-void DrawHUD();
+
 
 #endif

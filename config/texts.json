@@ -1,5 +1,46 @@
-{
-    "hatkid_show_egglet" : {
-        "english":"Hey, can you show me an Egglet?"
+{   
+    "title_mom":{
+        "english":"Mom",
+        "italian":"Mama"
+    },
+    "title_thomas":{
+        "english":"Thomas",
+        "italian":"Tomasso"
+    },
+    "title_hemlock":{
+        "english":"Prof. Hemlock",
+        "italian":"Prof. Cicuta"
+    },
+    "title_tenon":{
+        "english":"Prof. Tenon",
+        "italian":"Prof. Tenone"
+    },
+    "title_oatwheel":{
+        "english":"Oatwheel Town"
+    },
+    "text_super_effective":{
+        "english":"It's super effective!",
+        "italian":"E molto effetivo!"
+    },
+    "text_not_very_effective":{
+        "english":"It's not very effective...",
+        "italian":"Non e molto effetivo..."
+    },
+    "text_hatkid_show_egglet" : {
+        "english":["Hey, can you show me an Egglet?"]
+    },
+    "text_window_looking_good" : {
+        "english":["My reflection!\nLooking good!"],
+        "italian":["Il mio riflesso!\nSto bene!"]
+    },
+    "text_mom_bye":{
+        "english":["Oh, look at you, <PLAYER>!\nYou're all grown up!","Have fun at college!"],
+        "italian":["Oh, guardati, <PLAYER>!\nSei cresciuto!","Divertiti all'universita!"]
+    },
+    "text_oatwheel_desc":{
+        "english":"Oatwheel Town\nHome Grown"
+    },
+    "text_oatwheel_directions":{
+        "english":"Oatwheel Town\nWest: Amaranth Hills"
     }
 }

@@ -20,4 +20,6 @@ void game_init() {
 	game.steps = 0;
 	game.time = 0;
 	game.state = GAMESTATE_FIELD;
+	game.camera_offset_x = 128;
+	game.camera_offset_y = 96;
 }

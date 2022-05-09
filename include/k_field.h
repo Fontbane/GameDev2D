@@ -4,15 +4,15 @@
 #include "k_entity.h"
 
 typedef enum {
+    COLL_IMPASSIBLE,
     COLL_2,
     COLL_3,
     COLL_4,
     COLL_5,
     COLL_6,
-    COLL_IMPASSIBLE,
-    COLL_WATER,
     COLL_TRANSITION,
-    COLL_MULTILEVEL
+    COLL_MULTILEVEL,
+    COLL_WATER
 } TileCollision;
 
 typedef enum MetatileBehavior{
@@ -56,7 +56,7 @@ extern void SetUpTilesets();
 void tile_manager_init(u8 tilesetCount);
 void tileset_load(char* filename);
 void tileset_free(Tileset tileset);
-void tileset_draw(Tileset tileset, u16 tile, Vector2D position);
+void tileset_draw(Tileset* tileset, u16 tile, Vector2D position);
 
 typedef u16 MapTile;
 

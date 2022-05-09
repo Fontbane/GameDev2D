@@ -1,4 +1,5 @@
-#include "simple_json.h"
+#ifndef __K_SAVE_H__
+#define __K_SAVE_H__
 
 #include "k_field.h"
 #include "k_item.h"
@@ -10,7 +11,9 @@ typedef struct TheBalls {
 	Player client;
 	time_t playTime;
 	u64 quests;
-	Item inventory[8];
+	u16* inventory;
+	char* language;
+	u64 steps;
 } SaveBlock1;
 
 typedef struct SaveBlock2 {
@@ -31,3 +34,5 @@ SaveBlock2 party;
 extern SaveBlock1	*LoadSave(char* filename);
 extern void			WriteSave(char* filename);
 extern void			NewSave(char* filename);
+
+#endif

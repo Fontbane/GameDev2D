@@ -3,6 +3,7 @@
 
 #include <SDL.h>
 #include "gfc_vector.h"
+#include "gfc_color.h"
 /**
  * @brief draw a pixel to the current rendering context
  * @param pixel the screen position to draw at
@@ -12,7 +13,9 @@ void gf2d_draw_pixel(Vector2D pixel,Vector4D color);
 
 void gf2d_draw_circle(Vector2D center, int radius, Vector4D color);
 
-void gf2d_draw_rect(SDL_Rect rect,Vector4D color);
+void gf2d_draw_rect(SDL_Rect rect,Color color);
+
+void gf2d_draw_rect_filled(SDL_Rect rect, Color color);
 
 /**
  * @brief draw a line to the current rendering context

@@ -7,10 +7,14 @@
 #include "k_entity.h"
 #include "k_field.h"
 #include "k_save.h"
+#include "k_event_scripts.h"
+#include "k_text.h"
+#include "k_npc.h"
 
 typedef struct EntityManager {
 	u32 maxEnts;
 	Edict* entities;
+	Warp* warps;
 }EntityManager;
 
 static EntityManager entity_manager;
@@ -25,6 +29,9 @@ Edict* ent_new() {
 			entity_manager.entities[i].draw_offset = vector2d(-8, 0);
 			entity_manager.entities[i].Think = ent_think_generic;
 			entity_manager.entities[i].OnCollide = ent_collide_generic;
+			entity_manager.entities[i].localID = i;
+			entity_manager.entities[i].moveq = newq();
+			if (!entity_manager.entities[i].moveq) slog("Could not create new movement queue");
 			slog("New entity created");
 			return &entity_manager.entities[i];
 		}
@@ -37,7 +44,8 @@ void ent_draw(Edict* ent) {
 		//slog("Entity has no sprite to draw");
 		return;
 	}
-	vector2d_add(ent->draw_position, ent->position, ent->draw_offset);
+	ent->draw_position.x = game.camera_offset_x - player->position.x + ent->position.x + ent->draw_offset.x;
+	ent->draw_position.y = game.camera_offset_y - player->position.y + ent->position.y + ent->draw_offset.y;
 	gf2d_sprite_draw(
 		ent->sprite,
 		ent->draw_position,
@@ -136,31 +144,49 @@ void ent_manager_draw_all() {
 	}
 }
 
+
+void setmovement(Edict* ent, Point8 mvmt) {
+	if (!empty(ent->moveq)) {
+		qclear(ent->moveq);
+	}
+	if (mvmt.x != 0 && mvmt.y != 0) {
+		enque(ent->moveq, (Point8) { 0, mvmt.y });
+		enque(ent->moveq, (Point8) { mvmt.x, 0 });
+	}
+	else {
+		enque(ent->moveq, mvmt);
+	}
+}
+
 void ent_move(Edict* ent) {
-	if (ent->moving)
+	if (ent->moving == 17) ent->moving = 0;
+	if (0<ent->moving&&ent->moving<17)
 	{
-		if (!cell_cmp(ent->targetCell, ent->cellPos)) {
+		if (!cell_cmp(ent->targetCell, ent->cellPos) && (ent->velocity >= 1 || ent->moving % 2 == 1)) {
 			switch (ent->facing) {
 			case DIR_S:
+				ent->position.y += ent->velocity;
+				break;
 			case DIR_N:
-				ent->position.y += ent->moveinfo.velocity;
+				ent->position.y -= ent->velocity;
 				break;
 			case DIR_W:
+				ent->position.x += ent->velocity;
+				break;
 			case DIR_E:
-				ent->position.x += ent->moveinfo.velocity;
+				default:
+				ent->position.x -= ent->velocity;
 			}
-		}
-		else {
-			ent->moving = 0;
+			ent->moving++;
 		}
 		return;
 	};
 
 	Point8 movement;
-	if (empty(&ent->moveq))
+	if (empty(ent->moveq))
 		return;
 
-	movement = pop(&ent->moveq);
+	movement = pop(ent->moveq);
 	ent->moving = 1;
 	
 	cell_add(ent->targetCell, ent->cellPos, movement);
@@ -209,7 +235,7 @@ void talk_riddler(Edict* ent, Direction dir) {
 }
 void talk_give_restorade(Edict* ent, Direction dir) {
 	SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Fran", "Hey, my Squoink's low on health. Can you give me a Restorade?", NULL);
-	if (RemoveItem("Restorade")) {
+	if (RemoveItem(ITEM_RESTORADE)) {
 		SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_INFORMATION, "Fran", "Oh, thanks man, I owe you one! Here, have a Pyruff.", NULL);
 		party.partyPersonal[3] = *monster_new(SPECIES_PYRUFF, 5, 0, Random32());
 		party.party[3] = *monster_set_dict(party.partyPersonal + 3);
@@ -232,6 +258,22 @@ u16 CheckEntCollision(Point8 pt, Direction dir) {
 	return SDL_FALSE;
 }
 
+void WarpPlayer(Edict* ent, Direction dir) {
+	int i;
+	lockall();
+	for (i = 0; entity_manager.entities[i].eventType != EV_TRIGGER; i++) {
+		if (entity_manager.entities[i].eventType == EV_WARP && entity_manager.entities[i].info.w.id == ent->info.w.connection) {
+			player->cellPos = entity_manager.entities[i].cellPos;
+			player->position = entity_manager.entities[i].position;
+			player->targetCell = player->cellPos;
+			player->targetPosition = player->position;
+			player->facing = dir;
+			unlockall();
+			slog("Warping");
+			return;
+		}
+	}
+}
 
 Point8 cell(s8 x, s8 y) {
 	Point8 c= { x, y };
@@ -246,4 +288,154 @@ Point8 world_to_cell(Vector2D pos) {
 Vector2D cell_to_world(Point8 pos) {
 	Vector2D v = { pos.x * 16.0f, pos.y * 16.0f };
 	return v;
+}
+
+void LoadEntitiesFromJson(SJson* json) {
+	SJson* arr, * el;
+	Edict* e;
+	char* buff;
+	int i, c, incr;
+	short trash;
+	incr = 0;
+	slog("Loading entities");
+	arr = sj_object_get_value(json, "signposts");
+	if (arr) {
+		slog("Loading signposts");
+		for (c = sj_array_get_count(arr), i = 0; i < c; i++) {
+			el = sj_array_get_nth(arr, i);
+			e = ent_new();
+			if (!e) slog("Something went wrong");
+			e->collidable = 1;
+			e->eventType = EV_SIGNPOST;
+			sj_get_integer_value(sj_object_get_value(el, "x"), &e->cellPos.x);
+			sj_get_integer_value(sj_object_get_value(el, "y"), &e->cellPos.y);
+			buff = sj_get_string_value(sj_object_get_value(el, "text"));
+			if (buff) {
+				gfc_line_cpy(e->info.s.text, "please for the love of god work for me");
+			}
+			e->OnCollide = ES_signpost_collide;
+			e->position.x = e->cellPos.x * 16.0;
+			e->position.y = e->cellPos.y * 16.0;
+			incr++;
+			slog("fdsa");
+		}
+	}
+	arr = sj_object_get_value(json, "npcs");
+	if (arr) {
+		slog("Loading npcs");
+		for (c = sj_array_get_count(arr), i = 0; i < c; i++) {
+			el = sj_array_get_nth(arr, i);
+			e = ent_new();
+			e->inUse = 1;
+			e->collidable = 1;
+			e->eventType = EV_NPC;
+			sj_get_integer_value(sj_object_get_value(el, "x"), &e->cellPos.x);
+			sj_get_integer_value(sj_object_get_value(el, "y"), &e->cellPos.y);
+			e->position.x = e->cellPos.x * 16.0;
+			e->position.y = e->cellPos.y * 16.0;
+			if (buff = sj_get_string_value(sj_object_get_value(el, "type"))) {
+				if (strcmp(buff, "Tamer") == 0) {
+					e->eventType = EV_TAMER;
+					if (buff = sj_get_string_value(sj_object_get_value(el, "tamer_id"))) {
+						sj_get_integer_value(sj_object_get_value(el, "flag"), &e->info.n.globalFlagID);
+						sj_get_integer_value(sj_object_get_value(el, "sight"), &e->info.n.sight);
+						e->info.n.tamerID = *(u16*)gfc_hashmap_get(gTamerIDs, buff);
+					}
+					e->Think = tamer_think;
+				}
+				else if (strcmp(buff, "NPC") == 0) {
+					e->Think = gfc_hashmap_get(gEventScripts, sj_get_string_value(sj_object_get_value(el, "think")));
+				}
+				e->OnCollide = gfc_hashmap_get(gEventScripts, sj_get_string_value(sj_object_get_value(el, "oncollide")));
+				e->OnTalk = gfc_hashmap_get(gEventScripts, sj_get_string_value(sj_object_get_value(el, "ontalk")));
+			}
+			buff = sj_get_string_value(sj_object_get_value(el, "facing"));
+			if (strcmp(buff, "north") == 0) e->facing = DIR_N;
+			else if (strcmp(buff, "west") == 0) e->facing = DIR_W;
+			else if (strcmp(buff, "east") == 0) e->facing = DIR_E;
+			else e->facing = DIR_S;
+			buff = sj_get_string_value(sj_object_get_value(el, "sprite"));
+			e->sprite = gf2d_sprite_load_all(buff, 32, 32, 4);
+			e->frame = 0.0f;
+			incr++;
+		}
+	}
+	arr = sj_object_get_value(json, "warps");
+	if (arr) {
+		slog("Loading warps");
+		for (c = sj_array_get_count(arr), i = 0; i < c; i++) {
+			el = sj_array_get_nth(arr, i);
+			e = ent_new();
+			e->inUse = 1;
+			e->collidable = 1;
+			e->eventType = EV_WARP;
+			sj_get_integer_value(sj_object_get_value(el, "x"), &e->cellPos.x);
+			sj_get_integer_value(sj_object_get_value(el, "y"), &e->cellPos.y);
+			e->position.x = e->cellPos.x * 16.0;
+			e->position.y = e->cellPos.y * 16.0;
+			if (sj_object_get_value(el, "fade")) e->info.w.fadeToBlack = 1;
+			if (sj_object_get_value(el, "spin")) e->info.w.spin = 1;
+			if (buff = sj_get_string_value(sj_object_get_value(el, "mapID"))) {
+				e->info.w.mapID = buff;
+				e->OnCollide = ES_warp_map;
+			}
+			else {
+				e->OnCollide = WarpPlayer;
+			}
+			sj_get_integer_value(sj_object_get_value(el, "id"), &e->info.w.id);
+			sj_get_integer_value(sj_object_get_value(el, "dst"), &e->info.w.connection);
+			incr++;
+		}
+	}
+	arr = sj_object_get_value(json, "triggers");
+	if (arr) {
+		slog("Loading triggers");
+		for (c = sj_array_get_count(arr), i = 0; i < c; i++) {
+			el = sj_array_get_nth(arr, i);
+			e = ent_new();
+			e->inUse = 1;
+			e->eventType = EV_TRIGGER;
+			sj_get_integer_value(sj_object_get_value(el, "x"), &e->cellPos.x);
+			sj_get_integer_value(sj_object_get_value(el, "y"), &e->cellPos.y);
+			e->position.x = e->cellPos.x * 16.0;
+			e->position.y = e->cellPos.y * 16.0;
+			if (buff = sj_get_string_value(sj_object_get_value(el, "oncollide"))) {
+				e->OnCollide = gfc_hashmap_get(gEventScripts, buff);
+			}
+			else {
+				slog("Trigger event object has no associated function");
+			}
+			incr++;
+		}
+	}
+	arr = sj_object_get_value(json, "items");
+	if (arr) {
+		slog("Parsing item events");
+		for (c = sj_array_get_count(arr), i = 0; i < c; i++) {
+			el = sj_array_get_nth(arr, i);
+			e = ent_new();
+			sj_get_integer_value(sj_object_get_value(el, "globalID"), &e->info.n.globalFlagID);
+			if (save1.quests & e->info.n.globalFlagID) {
+				continue;//skip this entity if it's been picked up already
+			}
+			e->inUse = 1;
+			e->eventType = EV_ITEM;
+			sj_get_integer_value(sj_object_get_value(el, "x"), &e->cellPos.x);
+			sj_get_integer_value(sj_object_get_value(el, "y"), &e->cellPos.y);
+			e->position.x = e->cellPos.x * 16.0;
+			e->position.y = e->cellPos.y * 16.0;
+			if (sj_get_bool_value(sj_object_get_value(el, "hidden"), &trash)) {
+				e->info.n.sight = 1;//hidden items are invisible and not collidable
+			}
+			else {
+				e->sprite = gf2d_sprite_load_image("images/objects/item.png");
+				e->collidable = 1;
+			}
+			e->OnTalk = ES_item_find;
+			buff = sj_get_string_value(sj_object_get_value(el, "itemID"));
+			e->info.n.tamerID = ItemIDFromJson(buff);
+			incr++;
+		}
+	}
+	slog("All entities loaded");
 }
